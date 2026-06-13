@@ -19,6 +19,9 @@ Y4 冰河时代 / Ice Age memory challenge.
 
 - `index.html` - main game file
 - `assets/ice-age-bgm.mp3` - background music
+- `assets/mammoth.png` - mammoth image
+- `assets/sabertooth.png` - saber-toothed tiger image
+- `assets/sloth.png` - giant sloth image
 
 ## Publish To GitHub Pages
 

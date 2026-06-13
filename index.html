@@ -275,24 +275,24 @@
 
     .fossil-cards {
       position: absolute;
-      right: 7%;
+      right: 5%;
       bottom: 68px;
-      width: min(360px, 68%);
-      height: 238px;
+      width: min(460px, 74%);
+      height: 286px;
       filter: drop-shadow(0 24px 24px rgba(0,0,0,0.32));
     }
 
     .fossil-card {
       position: absolute;
-      width: 150px;
-      min-height: 172px;
-      padding: 14px 12px 12px;
+      width: 178px;
+      min-height: 208px;
+      padding: 10px 10px 12px;
       border-radius: 8px;
       background: linear-gradient(180deg, rgba(232, 251, 255, 0.94), rgba(178, 225, 239, 0.9));
       border: 1px solid rgba(255,255,255,0.76);
       color: #123140;
       display: grid;
-      align-content: end;
+      grid-template-rows: minmax(0, 1fr) auto;
       gap: 8px;
       font-weight: 1000;
       transform-origin: bottom center;
@@ -301,7 +301,7 @@
     }
 
     .fossil-card:nth-child(1) { left: 0; bottom: 8px; transform: rotate(-8deg); }
-    .fossil-card:nth-child(2) { left: 106px; bottom: 40px; transform: rotate(2deg); animation-delay: -1.4s; }
+    .fossil-card:nth-child(2) { left: 142px; bottom: 44px; transform: rotate(2deg); animation-delay: -1.4s; }
     .fossil-card:nth-child(3) { right: 0; bottom: 0; transform: rotate(8deg); animation-delay: -2.7s; }
 
     @keyframes floatCard {
@@ -309,95 +309,35 @@
       50% { translate: 0 -8px; }
     }
 
-    .animal-mark {
-      position: absolute;
-      left: 50%;
-      top: 22px;
-      width: 96px;
-      height: 76px;
-      translate: -50% 0;
-      opacity: 0.92;
-    }
-
-    .animal-mark.mammoth {
-      border-radius: 44px 52px 28px 28px;
-      background: linear-gradient(180deg, #6a4a35, #372318);
-    }
-
-    .animal-mark.mammoth::before {
-      content: "";
-      position: absolute;
-      left: -23px;
-      top: 28px;
-      width: 45px;
-      height: 50px;
-      border-radius: 999px;
-      background: #4d3424;
-      transform: rotate(14deg);
-    }
-
-    .animal-mark.mammoth::after {
-      content: "";
-      position: absolute;
-      left: -28px;
-      top: 38px;
-      width: 64px;
-      height: 34px;
-      border-bottom: 7px solid #f9f0db;
-      border-radius: 0 0 60px 60px;
-      transform: rotate(-12deg);
-    }
-
-    .animal-mark.tiger {
-      width: 92px;
-      height: 60px;
-      top: 34px;
-      border-radius: 52px 48px 18px 18px;
+    .animal-photo {
+      min-height: 142px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
       background:
-        linear-gradient(115deg, transparent 0 13%, rgba(15, 24, 29, 0.78) 13% 19%, transparent 19% 35%, rgba(15, 24, 29, 0.78) 35% 42%, transparent 42%),
-        linear-gradient(180deg, #b86d38, #66402a);
+        radial-gradient(circle at 50% 38%, rgba(255,255,255,0.95), rgba(255,255,255,0.62) 62%, rgba(255,255,255,0.08));
+      overflow: hidden;
     }
 
-    .animal-mark.tiger::before,
-    .animal-mark.tiger::after {
-      content: "";
-      position: absolute;
-      bottom: -18px;
-      width: 8px;
-      height: 34px;
-      border-radius: 999px;
-      background: #2f211b;
+    .animal-photo img {
+      max-width: 100%;
+      max-height: 150px;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 10px rgba(0,0,0,0.18));
     }
 
-    .animal-mark.tiger::before { left: 23px; }
-    .animal-mark.tiger::after { right: 22px; }
-
-    .animal-mark.sloth {
-      width: 78px;
-      height: 96px;
-      top: 16px;
-      border-radius: 40px 40px 30px 30px;
-      background: linear-gradient(180deg, #7b5f46, #483425);
+    .animal-photo.sloth img {
+      max-height: 164px;
+      transform: translateY(4px);
     }
-
-    .animal-mark.sloth::before,
-    .animal-mark.sloth::after {
-      content: "";
-      position: absolute;
-      top: 56px;
-      width: 13px;
-      height: 64px;
-      border-radius: 999px;
-      background: #3f2f23;
-    }
-
-    .animal-mark.sloth::before { left: -8px; transform: rotate(18deg); }
-    .animal-mark.sloth::after { right: -8px; transform: rotate(-18deg); }
 
     .card-label {
       position: relative;
       z-index: 1;
-      padding-top: 100px;
+      text-align: center;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.78);
     }
 
     .screen {
@@ -875,15 +815,15 @@
           </div>
           <div class="fossil-cards">
             <div class="fossil-card">
-              <div class="animal-mark mammoth"></div>
+              <div class="animal-photo"><img src="assets/mammoth.png" alt="猛犸象"></div>
               <div class="card-label">猛犸象</div>
             </div>
             <div class="fossil-card">
-              <div class="animal-mark tiger"></div>
+              <div class="animal-photo"><img src="assets/sabertooth.png" alt="剑齿虎"></div>
               <div class="card-label">剑齿虎</div>
             </div>
             <div class="fossil-card">
-              <div class="animal-mark sloth"></div>
+              <div class="animal-photo sloth"><img src="assets/sloth.png" alt="巨型地獭"></div>
               <div class="card-label">巨型地獭</div>
             </div>
           </div>
