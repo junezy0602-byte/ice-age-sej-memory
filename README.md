@@ -8,15 +8,17 @@ Y4 冰河时代 / Ice Age memory challenge.
 
 ## Gameplay
 
-1. Students read a memory note for 15 seconds.
-2. The note disappears.
-3. The game randomly asks one question.
-4. A correct answer unlocks the next level.
-5. A wrong answer removes one life and repeats the level.
+1. Students press start and read the rules first.
+2. Students read a simplified memory note for 30 seconds.
+3. The note disappears.
+4. The game randomly asks one question.
+5. A correct answer unlocks the next level.
+6. A wrong answer removes one life and repeats the level.
 
 ## Files
 
 - `index.html` - main game file
+- `assets/ice-age-bgm.mp3` - background music
 
 ## Publish To GitHub Pages
 
