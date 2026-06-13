@@ -1089,7 +1089,7 @@
       el("noteLevel").textContent = `LEVEL ${state.level + 1}`;
       el("noteTitle").textContent = level.title;
       el("noteList").innerHTML = level.note.map((item) => `<li>${item}</li>`).join("");
-      el("supportTip").innerHTML = `<strong>弱生提示：先记这些就好</strong>${level.support.join("；")}`;
+      el("supportTip").innerHTML = `<strong>记忆小帮手</strong>${level.support.join("；")}`;
       el("memoryChain").innerHTML = `<div class="chain-title">Newton Memory</div>` +
         level.chain.map((item) => `<div class="memory-step">${item}</div>`).join("");
       updateTimerRing();
