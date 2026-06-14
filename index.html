@@ -379,11 +379,157 @@
     }
 
     .stage {
+      position: relative;
+      overflow: hidden;
       min-height: 600px;
       padding: clamp(14px, 3vw, 24px);
       background:
         radial-gradient(circle at 16% 12%, rgba(159, 231, 255, 0.34), transparent 27%),
         linear-gradient(180deg, #e9fbff, #c3eefd 58%, #effcff);
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.62;
+      background:
+        radial-gradient(circle, rgba(255,255,255,0.95) 0 2px, transparent 3px) 12px 18px / 94px 94px,
+        radial-gradient(circle, rgba(255,255,255,0.8) 0 1px, transparent 2px) 48px 8px / 78px 78px;
+      animation: snowfall 12s linear infinite;
+    }
+
+    @keyframes snowfall {
+      from { background-position: 12px -80px, 48px -40px; }
+      to { background-position: 12px 120px, 48px 160px; }
+    }
+
+    .stage > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stage.stage-correct {
+      animation: iceGlow 0.75s ease;
+    }
+
+    .stage.stage-wrong {
+      animation: iceQuake 0.34s linear;
+    }
+
+    @keyframes iceGlow {
+      0% { box-shadow: inset 0 0 0 rgba(34,181,115,0); }
+      45% { box-shadow: inset 0 0 70px rgba(34,181,115,0.34); }
+      100% { box-shadow: inset 0 0 0 rgba(34,181,115,0); }
+    }
+
+    @keyframes iceQuake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(3px); }
+    }
+
+    .stage-signal {
+      min-height: 40px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(6, 24, 36, 0.82);
+      border: 1px solid rgba(159, 231, 255, 0.45);
+      color: #e9fbff;
+      font-weight: 1000;
+      text-align: center;
+      box-shadow: 0 14px 28px rgba(6,24,36,0.16);
+    }
+
+    .expedition-track {
+      position: relative;
+      margin-bottom: 16px;
+      padding: 18px 16px 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.62);
+      border: 1px solid rgba(80,148,171,0.2);
+      overflow: hidden;
+    }
+
+    .track-line {
+      position: absolute;
+      left: 44px;
+      right: 44px;
+      top: 46px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(11,111,168,0.18);
+    }
+
+    .track-line::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--level-progress, 0%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22b573, #1f9be0);
+      transition: width 0.5s ease;
+    }
+
+    .ice-runner {
+      position: absolute;
+      left: calc(44px + (100% - 88px) * var(--level-progress-number, 0));
+      top: 23px;
+      width: 46px;
+      height: 46px;
+      translate: -50% 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffffff, #9fe7ff);
+      border: 3px solid #0b6fa8;
+      display: grid;
+      place-items: center;
+      color: #0d3144;
+      font-weight: 1000;
+      box-shadow: 0 10px 22px rgba(31,155,224,0.26);
+      transition: left 0.55s ease;
+      animation: runnerBounce 1.5s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    @keyframes runnerBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .track-checkpoints {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding-top: 48px;
+    }
+
+    .checkpoint {
+      text-align: center;
+      color: var(--muted);
+      font-weight: 1000;
+      font-size: 13px;
+    }
+
+    .checkpoint::before {
+      content: "";
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin: 0 auto 6px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #9fe7ff;
+    }
+
+    .checkpoint.done::before {
+      background: #22b573;
+      border-color: #22b573;
+      box-shadow: 0 0 0 6px rgba(34,181,115,0.12);
     }
 
     .memory-layout {
@@ -406,6 +552,18 @@
     .note-card {
       padding: clamp(18px, 3vw, 26px);
       min-height: 380px;
+      animation: cardRise 0.45s ease both;
+    }
+
+    #memoryPhase,
+    #questionPhase,
+    #summaryPhase {
+      animation: cardRise 0.45s ease both;
+    }
+
+    @keyframes cardRise {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .level-label {
@@ -913,7 +1071,17 @@
             <button class="btn secondary" id="restartBtn">重来</button>
           </div>
         </div>
-        <div class="stage">
+        <div class="stage" id="stage" style="--level-progress: 0%; --level-progress-number: 0;">
+          <div class="stage-signal" id="stageSignal">冰河探险准备开始：先记重点，再闯关。</div>
+          <div class="expedition-track" aria-label="冰河探险路线">
+            <div class="track-line"></div>
+            <div class="ice-runner" id="iceRunner">Y4</div>
+            <div class="track-checkpoints">
+              <div class="checkpoint" data-checkpoint="0">认识冰河时代</div>
+              <div class="checkpoint" data-checkpoint="1">后冰河期时间线</div>
+              <div class="checkpoint" data-checkpoint="2">冰河动物</div>
+            </div>
+          </div>
           <div id="memoryPhase">
             <div class="memory-layout">
               <article class="note-card">
@@ -1095,6 +1263,30 @@
       el("scorePill").textContent = state.score;
       el("starsPill").textContent = state.stars;
       el("livesPill").textContent = "❤ ".repeat(state.lives).trim() || "0";
+      updateExpeditionTrack();
+    }
+
+    function updateExpeditionTrack() {
+      const progress = levels.length <= 1 ? 0 : state.level / (levels.length - 1);
+      el("stage").style.setProperty("--level-progress", `${progress * 100}%`);
+      el("stage").style.setProperty("--level-progress-number", progress);
+      document.querySelectorAll(".checkpoint").forEach((checkpoint) => {
+        const index = Number(checkpoint.dataset.checkpoint);
+        checkpoint.classList.toggle("done", index <= state.level);
+      });
+    }
+
+    function setStageSignal(message) {
+      el("stageSignal").textContent = message;
+    }
+
+    function flashStage(type, message) {
+      const stage = el("stage");
+      stage.classList.remove("stage-correct", "stage-wrong");
+      void stage.offsetWidth;
+      stage.classList.add(type === "correct" ? "stage-correct" : "stage-wrong");
+      if (message) setStageSignal(message);
+      setTimeout(() => stage.classList.remove("stage-correct", "stage-wrong"), 760);
     }
 
     function startGame() {
@@ -1118,6 +1310,7 @@
       el("summaryPhase").hidden = true;
       el("gameTitle").textContent = `LEVEL ${state.level + 1} · ${level.title}`;
       el("gameNote").textContent = "30 秒记忆笔记，之后随机抽题。";
+      setStageSignal(`LEVEL ${state.level + 1}：记住重点，冰门即将关闭。`);
       el("noteLevel").textContent = `LEVEL ${state.level + 1}`;
       el("noteTitle").textContent = level.title;
       el("noteList").innerHTML = level.note.map((item) => `<li>${item}</li>`).join("");
@@ -1145,6 +1338,7 @@
       const level = levels[state.level];
       state.currentQuestion = shuffle(level.questions)[0];
       state.locked = false;
+      setStageSignal("冰门关上了。答对，冰桥才会打开。");
       el("memoryPhase").hidden = true;
       el("questionPhase").hidden = false;
       el("questionLevelTag").textContent = `LEVEL ${state.level + 1}`;
@@ -1181,6 +1375,7 @@
         el("nextHint").textContent = state.level >= levels.length - 1 ? "你已经完成所有关卡。" : "可以进入下一关。";
         el("nextBtn").hidden = false;
         updateHud();
+        flashStage("correct", "答对！冰桥打开，探险路线前进。");
         toast("答对！进入下一关。");
       } else {
         button.classList.add("wrong");
@@ -1188,6 +1383,7 @@
         el("feedback").textContent = `答错。正确答案：${state.currentQuestion.answer}`;
         el("feedback").className = "feedback bad";
         updateHud();
+        flashStage("wrong", "冰层震动！扣 1 条生命，重新挑战这一关。");
         if (state.lives <= 0) {
           el("nextHint").textContent = "生命用完了。";
           setTimeout(() => endGame(false), 900);
@@ -1205,6 +1401,7 @@
       }
       state.level += 1;
       updateHud();
+      flashStage("correct", `LEVEL ${state.level + 1} 解锁！继续冰河探险。`);
       startLevel();
     }
 
@@ -1218,6 +1415,7 @@
       el("summaryText").textContent = won
         ? `你完成 3 个关卡，获得 ${state.stars} 颗星，分数 ${state.score}。`
         : `生命用完了。复习 Newton Memory 后再挑战一次。`;
+      setStageSignal(won ? "全部冰门打开！选择你的最终宝藏。" : "探险暂停。复习后再出发。");
       resetTreasure();
       el("treasureZone").hidden = !won;
     }
