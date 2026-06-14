@@ -621,6 +621,75 @@
       margin-bottom: 10px;
     }
 
+    .treasure-zone {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(80, 148, 171, 0.24);
+    }
+
+    .treasure-zone h4 {
+      margin: 0 0 6px;
+      font-size: clamp(20px, 3vw, 28px);
+      color: var(--deep);
+    }
+
+    .treasure-zone p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .treasure-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .treasure-box {
+      min-height: 126px;
+      border-radius: 8px;
+      border: 2px solid #9fe7ff;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.42), transparent 38%),
+        linear-gradient(135deg, #1f9be0, #0b6fa8);
+      color: white;
+      font-weight: 1000;
+      display: grid;
+      place-items: center;
+      gap: 6px;
+      padding: 12px;
+      box-shadow: 0 14px 28px rgba(31, 155, 224, 0.24);
+      transition: transform 0.16s ease, filter 0.16s ease;
+    }
+
+    .treasure-box:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.06);
+    }
+
+    .treasure-box.opened {
+      background: linear-gradient(135deg, #fff8df, #ffd166);
+      border-color: #ffbd4a;
+      color: #3b2c13;
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .treasure-icon {
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .treasure-result {
+      min-height: 34px;
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fff8df;
+      border: 1px solid #ffe3a0;
+      color: #3b2c13;
+      font-weight: 1000;
+    }
+
     .overlay {
       position: fixed;
       inset: 0;
@@ -773,6 +842,10 @@
         height: 112px;
         font-size: 34px;
       }
+
+      .treasure-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -879,6 +952,25 @@
               <div class="summary-icon">🧊</div>
               <h3 id="summaryTitle">挑战完成！</h3>
               <p id="summaryText">你完成了冰河时代 Newton Memory。</p>
+              <div class="treasure-zone" id="treasureZone" hidden>
+                <h4>选择一个冰河宝藏</h4>
+                <p>通关奖励：三个宝藏只能选一个，看看你得到什么。</p>
+                <div class="treasure-grid">
+                  <button class="treasure-box" data-reward="你获得「冰河记忆大师」称号！">
+                    <span class="treasure-icon">🎁</span>
+                    <span>宝藏 A</span>
+                  </button>
+                  <button class="treasure-box" data-reward="你获得「时间线探险家」称号！">
+                    <span class="treasure-icon">🎁</span>
+                    <span>宝藏 B</span>
+                  </button>
+                  <button class="treasure-box" data-reward="你获得「远古动物守护者」称号！">
+                    <span class="treasure-icon">🎁</span>
+                    <span>宝藏 C</span>
+                  </button>
+                </div>
+                <div class="treasure-result" id="treasureResult">还没有打开宝藏。</div>
+              </div>
               <div class="hero-actions" style="justify-content:center;margin-top:16px">
                 <button class="btn" id="playAgainBtn">再玩一次</button>
               </div>
@@ -1126,6 +1218,27 @@
       el("summaryText").textContent = won
         ? `你完成 3 个关卡，获得 ${state.stars} 颗星，分数 ${state.score}。`
         : `生命用完了。复习 Newton Memory 后再挑战一次。`;
+      resetTreasure();
+      el("treasureZone").hidden = !won;
+    }
+
+    function resetTreasure() {
+      el("treasureResult").textContent = "还没有打开宝藏。";
+      document.querySelectorAll(".treasure-box").forEach((box) => {
+        box.disabled = false;
+        box.classList.remove("opened");
+        box.querySelector(".treasure-icon").textContent = "🎁";
+      });
+    }
+
+    function chooseTreasure(box) {
+      document.querySelectorAll(".treasure-box").forEach((item) => {
+        item.disabled = true;
+      });
+      box.classList.add("opened");
+      box.querySelector(".treasure-icon").textContent = "🏆";
+      el("treasureResult").textContent = box.dataset.reward;
+      toast("宝藏打开了！");
     }
 
     function toast(message) {
@@ -1188,6 +1301,9 @@
       if (event.target.id === "rulesOverlay") el("rulesOverlay").hidden = true;
     });
     el("musicToggle").addEventListener("click", toggleMusic);
+    document.querySelectorAll(".treasure-box").forEach((box) => {
+      box.addEventListener("click", () => chooseTreasure(box));
+    });
 
     updateHud();
   </script>
