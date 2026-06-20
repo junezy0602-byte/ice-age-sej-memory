@@ -1385,7 +1385,7 @@
                 <h4>选择一个冰河宝藏</h4>
                 <p>通关奖励：三个宝藏只能选一个，看看你得到什么。</p>
                 <div class="treasure-grid">
-                  <button class="treasure-box" data-reward="你获得「冰河记忆大师」称号！">
+                  <button class="treasure-box" data-bonus="2" data-reward="你获得「冰河记忆大师」称号！">
                     <span class="treasure-icon" aria-hidden="true">
                       <span class="treasure-glow"></span>
                       <span class="treasure-lid"></span>
@@ -1393,7 +1393,7 @@
                     </span>
                     <span>宝箱 A</span>
                   </button>
-                  <button class="treasure-box" data-reward="你获得「时间线探险家」称号！">
+                  <button class="treasure-box" data-bonus="3" data-reward="你获得「时间线探险家」称号！">
                     <span class="treasure-icon" aria-hidden="true">
                       <span class="treasure-glow"></span>
                       <span class="treasure-lid"></span>
@@ -1401,7 +1401,7 @@
                     </span>
                     <span>宝箱 B</span>
                   </button>
-                  <button class="treasure-box" data-reward="你获得「远古动物守护者」称号！">
+                  <button class="treasure-box" data-bonus="0" data-reward="你获得「远古动物守护者」称号！">
                     <span class="treasure-icon" aria-hidden="true">
                       <span class="treasure-glow"></span>
                       <span class="treasure-lid"></span>
@@ -1410,7 +1410,7 @@
                     <span>宝箱 C</span>
                   </button>
                 </div>
-                <div class="treasure-result" id="treasureResult">还没有打开宝藏。</div>
+                <div class="treasure-result" id="treasureResult">还没有打开宝箱。</div>
               </div>
               <div class="hero-actions" style="justify-content:center;margin-top:16px">
                 <button class="btn" id="playAgainBtn">再玩一次</button>
@@ -1771,7 +1771,7 @@
     }
 
     function resetTreasure() {
-      el("treasureResult").textContent = "还没有打开宝藏。";
+      el("treasureResult").textContent = "还没有打开宝箱。";
       document.querySelectorAll(".treasure-box").forEach((box) => {
         box.disabled = false;
         box.classList.remove("opened");
@@ -1779,12 +1779,15 @@
     }
 
     function chooseTreasure(box) {
+      const bonus = Number(box.dataset.bonus || 0);
       document.querySelectorAll(".treasure-box").forEach((item) => {
         item.disabled = true;
       });
       box.classList.add("opened");
-      el("treasureResult").textContent = box.dataset.reward;
-      toast("宝藏打开了！");
+      state.score += bonus;
+      updateHud();
+      el("treasureResult").textContent = `${box.dataset.reward} 宝箱奖励：+${bonus} 分。当前总分 ${state.score}。`;
+      toast(`宝箱打开了：+${bonus} 分`);
     }
 
     function toast(message) {
