@@ -17,6 +17,8 @@
       --pink: #ff5f8f;
       --green: #22b573;
       --red: #ef476f;
+      --purple: #6c5ce7;
+      --orange: #ff9f1c;
       --yellow: #ffd166;
       --card: rgba(255, 255, 255, 0.92);
       --line: rgba(173, 224, 239, 0.55);
@@ -122,6 +124,11 @@
       color: white;
       font-weight: 900;
       white-space: nowrap;
+    }
+
+    .pill.hot {
+      background: rgba(255, 159, 28, 0.18);
+      border-color: rgba(255, 209, 102, 0.5);
     }
 
     main {
@@ -445,6 +452,39 @@
       box-shadow: 0 14px 28px rgba(6,24,36,0.16);
     }
 
+    .mission-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .mission-chip {
+      min-height: 72px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(80,148,171,0.24);
+      box-shadow: 0 10px 20px rgba(42,98,116,0.1);
+    }
+
+    .mission-chip strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--blue-dark);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+    }
+
+    .mission-chip span {
+      display: block;
+      font-weight: 1000;
+      line-height: 1.25;
+    }
+
+    .mission-chip:nth-child(2) strong { color: #8a5a00; }
+    .mission-chip:nth-child(3) strong { color: #4a3fc7; }
+
     .expedition-track {
       position: relative;
       margin-bottom: 16px;
@@ -622,6 +662,62 @@
       gap: 10px;
     }
 
+    .power-card {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #121f33;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 12px 24px rgba(18,31,51,0.16);
+    }
+
+    .power-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-weight: 1000;
+    }
+
+    .power-meter {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      overflow: hidden;
+    }
+
+    .power-meter span {
+      display: block;
+      width: var(--energy, 0%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--yellow), var(--orange));
+      transition: width 0.32s ease;
+    }
+
+    .ready-panel {
+      margin-top: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .ready-panel .btn {
+      width: 100%;
+      background: var(--purple);
+      box-shadow: 0 10px 22px rgba(108, 92, 231, 0.22);
+    }
+
+    .ready-panel .btn:hover { background: #5948d5; }
+
+    .speed-note {
+      color: var(--muted);
+      font-weight: 900;
+      line-height: 1.35;
+      text-align: center;
+      font-size: 13px;
+    }
+
     .chain-title {
       color: var(--blue-dark);
       font-weight: 1000;
@@ -685,6 +781,11 @@
       background: #e6f8ff;
       color: var(--blue-dark);
       font-weight: 1000;
+    }
+
+    .tag.combo {
+      background: #fff2d3;
+      color: #8a5a00;
     }
 
     .question-text {
@@ -757,6 +858,40 @@
       border-color: #ffc2d2;
     }
 
+    .recall-card {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f8f4ff;
+      border: 1px solid #ddd2ff;
+      color: #382b77;
+      font-weight: 900;
+      line-height: 1.4;
+    }
+
+    .badge-rack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin: 16px 0 4px;
+    }
+
+    .badge-token {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: #eefbf4;
+      border: 1px solid #b8f2d2;
+      color: #11724a;
+      font-weight: 1000;
+    }
+
+    .badge-token.locked {
+      background: #eef5f8;
+      border-color: #d5edf5;
+      color: var(--muted);
+    }
+
     .next-panel {
       display: flex;
       justify-content: space-between;
@@ -774,7 +909,17 @@
     }
 
     .summary-icon {
-      font-size: 82px;
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #ffffff, #9fe7ff);
+      border: 4px solid #0b6fa8;
+      color: #0d3144;
+      font-size: 26px;
+      font-weight: 1000;
       line-height: 1;
       margin-bottom: 10px;
     }
@@ -833,7 +978,14 @@
     }
 
     .treasure-icon {
-      font-size: 40px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.5);
+      font-size: 20px;
       line-height: 1;
     }
 
@@ -944,6 +1096,10 @@
     }
 
     @media (max-width: 820px) {
+      .topbar {
+        position: static;
+      }
+
       .topbar-inner,
       .game-head,
       .next-panel {
@@ -991,6 +1147,10 @@
         grid-template-columns: 1fr;
       }
 
+      .mission-strip {
+        grid-template-columns: 1fr;
+      }
+
       .stage {
         min-height: 620px;
       }
@@ -1015,7 +1175,7 @@
           <div class="badge">Y4</div>
           <div>
             <h1>冰川世纪 Newton Memory</h1>
-            <div class="subtitle">历史主题：Y4 冰河时代 · 30 秒记忆闯关</div>
+            <div class="subtitle">历史主题：Y4 冰河时代 · 连击记忆闯关</div>
           </div>
         </div>
         <div class="scorebar" aria-live="polite">
@@ -1023,6 +1183,8 @@
           <div class="pill">分数：<span id="scorePill">0</span></div>
           <div class="pill">生命：<span id="livesPill">❤ ❤ ❤</span></div>
           <div class="pill">星星：<span id="starsPill">0</span></div>
+          <div class="pill hot">连击：<span id="comboPill">0</span></div>
+          <div class="pill hot">能量：<span id="energyPill">0%</span></div>
         </div>
       </div>
     </header>
@@ -1032,7 +1194,7 @@
         <div class="hero-copy">
           <div class="kicker">NEWTON MEMORY · HISTORY</div>
           <h2>冰河时代记忆挑战</h2>
-          <p>先看游戏规则，再用 30 秒记住冰河时代重点。时间到，笔记会消失，系统随机抽题。答对就进入下一关，答错会扣生命。</p>
+          <p>用 30 秒记住重点，也可以提早挑战。每关答对 2 题就能拿徽章，连击越高，分数和能量越高。</p>
           <div class="hero-actions">
             <button class="btn" id="startBtn">开始游戏</button>
             <button class="btn secondary" id="rulesBtn">看规则</button>
@@ -1073,6 +1235,20 @@
         </div>
         <div class="stage" id="stage" style="--level-progress: 0%; --level-progress-number: 0;">
           <div class="stage-signal" id="stageSignal">冰河探险准备开始：先记重点，再闯关。</div>
+          <div class="mission-strip" aria-live="polite">
+            <div class="mission-chip">
+              <strong>本关任务</strong>
+              <span id="missionGoal">答对 2 题解锁下一关</span>
+            </div>
+            <div class="mission-chip">
+              <strong>连击奖励</strong>
+              <span id="comboGoal">连续答对会加分</span>
+            </div>
+            <div class="mission-chip">
+              <strong>收集徽章</strong>
+              <span id="badgeGoal">完成关卡获得徽章</span>
+            </div>
+          </div>
           <div class="expedition-track" aria-label="冰河探险路线">
             <div class="track-line"></div>
             <div class="ice-runner" id="iceRunner">Y4</div>
@@ -1094,6 +1270,17 @@
                 <div class="timer-ring" id="timerRing" style="--progress: 100%">30</div>
                 <div class="phase-text">记忆时间：看清楚重点，时间到会隐藏。</div>
                 <div class="memory-chain" id="memoryChain"></div>
+                <div class="ready-panel">
+                  <button class="btn" id="readyBtn">记好了，马上挑战</button>
+                  <div class="speed-note" id="speedNote">越早准备好，答对后的速度奖励越高。</div>
+                </div>
+                <div class="power-card">
+                  <div class="power-title">
+                    <span>探险能量</span>
+                    <span id="energyText">0%</span>
+                  </div>
+                  <div class="power-meter" id="energyMeter" style="--energy: 0%"><span></span></div>
+                </div>
               </aside>
             </div>
           </div>
@@ -1102,12 +1289,14 @@
             <article class="question-card">
               <div class="question-meta">
                 <span class="tag" id="questionLevelTag">LEVEL 1</span>
-                <span class="tag">随机抽题</span>
+                <span class="tag" id="questionStepTag">第 1 / 2 题</span>
+                <span class="tag combo" id="comboTag">连击 0</span>
               </div>
               <h3>笔记已消失</h3>
               <p class="question-text" id="questionText">题目</p>
               <div class="choices" id="choices"></div>
               <div class="feedback" id="feedback">选择一个答案。</div>
+              <div class="recall-card" id="recallCard">回忆提示会在答题后出现。</div>
               <div class="next-panel">
                 <div id="nextHint">答对才能进入下一关。</div>
                 <button class="btn" id="nextBtn" hidden>进入下一关</button>
@@ -1117,23 +1306,24 @@
 
           <div id="summaryPhase" hidden>
             <article class="summary-card">
-              <div class="summary-icon">🧊</div>
+              <div class="summary-icon">WIN</div>
               <h3 id="summaryTitle">挑战完成！</h3>
               <p id="summaryText">你完成了冰河时代 Newton Memory。</p>
+              <div class="badge-rack" id="badgeRack"></div>
               <div class="treasure-zone" id="treasureZone" hidden>
                 <h4>选择一个冰河宝藏</h4>
                 <p>通关奖励：三个宝藏只能选一个，看看你得到什么。</p>
                 <div class="treasure-grid">
                   <button class="treasure-box" data-reward="你获得「冰河记忆大师」称号！">
-                    <span class="treasure-icon">🎁</span>
+                    <span class="treasure-icon">?</span>
                     <span>宝藏 A</span>
                   </button>
                   <button class="treasure-box" data-reward="你获得「时间线探险家」称号！">
-                    <span class="treasure-icon">🎁</span>
+                    <span class="treasure-icon">?</span>
                     <span>宝藏 B</span>
                   </button>
                   <button class="treasure-box" data-reward="你获得「远古动物守护者」称号！">
-                    <span class="treasure-icon">🎁</span>
+                    <span class="treasure-icon">?</span>
                     <span>宝藏 C</span>
                   </button>
                 </div>
@@ -1153,13 +1343,13 @@
     <div class="rules-card">
       <div class="rules-head">
         <h2>游戏规则</h2>
-        <div>30 秒记忆，隐藏笔记，随机抽题，答对闯关。</div>
+        <div>记重点，答两题，拿徽章，冲连击。</div>
       </div>
       <div class="rules-body">
         <div class="rule-step"><div class="rule-num">1</div><div>每关先看 30 秒记忆笔记。</div></div>
-        <div class="rule-step"><div class="rule-num">2</div><div>时间到，笔记会消失。</div></div>
-        <div class="rule-step"><div class="rule-num">3</div><div>系统随机抽一题。</div></div>
-        <div class="rule-step"><div class="rule-num">4</div><div>看黄色提示，先记关键词。答对进入下一关，答错扣 1 条生命。</div></div>
+        <div class="rule-step"><div class="rule-num">2</div><div>如果已经记好了，可以按“马上挑战”。</div></div>
+        <div class="rule-step"><div class="rule-num">3</div><div>每关答对 2 题，就能获得一个徽章。</div></div>
+        <div class="rule-step"><div class="rule-num">4</div><div>连续答对会加分。答错扣 1 条生命，并重新挑战本关。</div></div>
         <button class="btn" id="closeRulesBtn">明白了</button>
       </div>
     </div>
@@ -1170,10 +1360,13 @@
 
   <script>
     const MEMORY_SECONDS = 30;
+    const QUESTIONS_PER_LEVEL = 2;
+    const MAX_ENERGY = 100;
 
     const levels = [
       {
         title: "5.1 认识冰河时代",
+        badge: "冰层侦察员",
         note: [
           "气温急剧下降。",
           "厚冰层覆盖地球。",
@@ -1193,6 +1386,7 @@
       },
       {
         title: "5.2 后冰河期时间线",
+        badge: "时间线高手",
         note: [
           "更新世：250 万年前 → 11700 年前。",
           "更新世关键词：冷、取火、陆地变宽。",
@@ -1212,6 +1406,7 @@
       },
       {
         title: "冰河时代动物",
+        badge: "古动物专家",
         note: [
           "冰河时代动物：猛犸象、剑齿虎、巨型地獭。",
           "不是冰河时代：恐龙、迅猛龙、长颈鹿、熊猫。",
@@ -1233,10 +1428,18 @@
       level: 0,
       score: 0,
       stars: 0,
+      combo: 0,
+      bestCombo: 0,
+      energy: 0,
       lives: 3,
       timer: null,
       timeLeft: MEMORY_SECONDS,
       currentQuestion: null,
+      questionQueue: [],
+      questionNumber: 0,
+      levelCorrect: 0,
+      speedBonus: 0,
+      badges: [],
       locked: false,
       musicOn: true,
       bgm: null
@@ -1262,6 +1465,11 @@
       el("levelPill").textContent = `${Math.min(state.level + 1, levels.length)} / ${levels.length}`;
       el("scorePill").textContent = state.score;
       el("starsPill").textContent = state.stars;
+      el("comboPill").textContent = state.combo;
+      el("energyPill").textContent = `${state.energy}%`;
+      el("energyText").textContent = `${state.energy}%`;
+      el("energyMeter").style.setProperty("--energy", `${state.energy}%`);
+      el("comboGoal").textContent = state.combo > 0 ? `当前连击 ${state.combo}，继续加分` : "连续答对会加分";
       el("livesPill").textContent = "❤ ".repeat(state.lives).trim() || "0";
       updateExpeditionTrack();
     }
@@ -1293,6 +1501,10 @@
       state.level = 0;
       state.score = 0;
       state.stars = 0;
+      state.combo = 0;
+      state.bestCombo = 0;
+      state.energy = 0;
+      state.badges = [];
       state.lives = 3;
       updateHud();
       showScreen("gameScreen");
@@ -1305,11 +1517,18 @@
       const level = levels[state.level];
       state.locked = false;
       state.timeLeft = MEMORY_SECONDS;
+      state.questionQueue = shuffle(level.questions).slice(0, QUESTIONS_PER_LEVEL);
+      state.questionNumber = 0;
+      state.levelCorrect = 0;
+      state.speedBonus = 0;
       el("memoryPhase").hidden = false;
       el("questionPhase").hidden = true;
       el("summaryPhase").hidden = true;
       el("gameTitle").textContent = `LEVEL ${state.level + 1} · ${level.title}`;
-      el("gameNote").textContent = "30 秒记忆笔记，之后随机抽题。";
+      el("gameNote").textContent = `记忆后连续答对 ${QUESTIONS_PER_LEVEL} 题，解锁下一关。`;
+      el("missionGoal").textContent = `答对 ${QUESTIONS_PER_LEVEL} 题解锁下一关`;
+      el("comboGoal").textContent = state.combo > 0 ? `当前连击 ${state.combo}，继续加分` : "连续答对会加分";
+      el("badgeGoal").textContent = `本关徽章：${level.badge}`;
       setStageSignal(`LEVEL ${state.level + 1}：记住重点，冰门即将关闭。`);
       el("noteLevel").textContent = `LEVEL ${state.level + 1}`;
       el("noteTitle").textContent = level.title;
@@ -1317,6 +1536,7 @@
       el("supportTip").innerHTML = `<strong>记忆小帮手</strong>${level.support.join("；")}`;
       el("memoryChain").innerHTML = `<div class="chain-title">Newton Memory</div>` +
         level.chain.map((item) => `<div class="memory-step">${item}</div>`).join("");
+      el("speedNote").textContent = "越早准备好，答对后的速度奖励越高。";
       updateTimerRing();
       state.timer = setInterval(() => {
         state.timeLeft -= 1;
@@ -1336,17 +1556,20 @@
 
     function showQuestion() {
       const level = levels[state.level];
-      state.currentQuestion = shuffle(level.questions)[0];
+      state.currentQuestion = state.questionQueue[state.questionNumber] || shuffle(level.questions)[0];
       state.locked = false;
       setStageSignal("冰门关上了。答对，冰桥才会打开。");
       el("memoryPhase").hidden = true;
       el("questionPhase").hidden = false;
       el("questionLevelTag").textContent = `LEVEL ${state.level + 1}`;
+      el("questionStepTag").textContent = `第 ${state.questionNumber + 1} / ${QUESTIONS_PER_LEVEL} 题`;
+      el("comboTag").textContent = `连击 ${state.combo}`;
       el("questionText").textContent = state.currentQuestion.q;
       el("feedback").textContent = "选择一个答案。";
       el("feedback").className = "feedback";
+      el("recallCard").textContent = "答题后会出现一个记忆提示，帮助你把知识点记牢。";
       el("nextBtn").hidden = true;
-      el("nextHint").textContent = "答对才能进入下一关。";
+      el("nextHint").textContent = `本关还需要答对 ${QUESTIONS_PER_LEVEL - state.levelCorrect} 题。`;
       el("choices").innerHTML = "";
       shuffle(state.currentQuestion.options).forEach((option) => {
         const button = document.createElement("button");
@@ -1360,6 +1583,7 @@
     function answerQuestion(button, option) {
       if (state.locked) return;
       state.locked = true;
+      const level = levels[state.level];
       const correct = option === state.currentQuestion.answer;
       document.querySelectorAll(".choice").forEach((choice) => {
         choice.disabled = true;
@@ -1368,20 +1592,41 @@
 
       if (correct) {
         button.classList.add("correct");
-        state.score += 20;
+        state.combo += 1;
+        state.bestCombo = Math.max(state.bestCombo, state.combo);
+        state.levelCorrect += 1;
+        state.questionNumber += 1;
+        const comboBonus = Math.min(state.combo * 3, 15);
+        const earned = 20 + comboBonus + state.speedBonus;
+        state.score += earned;
         state.stars += 1;
-        el("feedback").textContent = "答对！冰层通道打开，准备进入下一关。";
+        state.energy = Math.min(MAX_ENERGY, state.energy + 20 + comboBonus);
+        el("feedback").textContent = state.levelCorrect >= QUESTIONS_PER_LEVEL
+          ? "答对！本关完成，徽章到手。"
+          : "答对！继续挑战下一题。";
         el("feedback").className = "feedback good";
-        el("nextHint").textContent = state.level >= levels.length - 1 ? "你已经完成所有关卡。" : "可以进入下一关。";
-        el("nextBtn").hidden = false;
+        el("recallCard").textContent = `记忆点：${state.currentQuestion.answer}。本题获得 ${earned} 分。`;
+        el("comboTag").textContent = `连击 ${state.combo}`;
         updateHud();
-        flashStage("correct", "答对！冰桥打开，探险路线前进。");
-        toast("答对！进入下一关。");
+        flashStage("correct", `答对！连击 ${state.combo}，能量上升。`);
+        if (state.levelCorrect >= QUESTIONS_PER_LEVEL) {
+          unlockBadge(level.badge);
+          el("nextHint").textContent = state.level >= levels.length - 1 ? "你已经完成所有关卡。" : "徽章到手，可以进入下一关。";
+          el("nextBtn").hidden = false;
+          toast(`获得徽章：${level.badge}`);
+        } else {
+          el("nextHint").textContent = `还差 ${QUESTIONS_PER_LEVEL - state.levelCorrect} 题，本关就完成。`;
+          toast("答对！下一题来了。");
+          setTimeout(showQuestion, 1050);
+        }
       } else {
         button.classList.add("wrong");
         state.lives -= 1;
+        state.combo = 0;
+        state.energy = Math.max(0, state.energy - 15);
         el("feedback").textContent = `答错。正确答案：${state.currentQuestion.answer}`;
         el("feedback").className = "feedback bad";
+        el("recallCard").textContent = `别急，记住这句：${state.currentQuestion.answer}。重新看一遍本关就能追回来。`;
         updateHud();
         flashStage("wrong", "冰层震动！扣 1 条生命，重新挑战这一关。");
         if (state.lives <= 0) {
@@ -1392,6 +1637,27 @@
           setTimeout(startLevel, 1300);
         }
       }
+    }
+
+    function readyForQuestion() {
+      if (el("memoryPhase").hidden) return;
+      clearInterval(state.timer);
+      state.speedBonus = Math.ceil(state.timeLeft / 6);
+      el("speedNote").textContent = `速度奖励已锁定：答对每题 +${state.speedBonus} 分。`;
+      showQuestion();
+    }
+
+    function unlockBadge(badge) {
+      if (!state.badges.includes(badge)) state.badges.push(badge);
+      renderBadges();
+    }
+
+    function renderBadges() {
+      const earned = new Set(state.badges);
+      el("badgeRack").innerHTML = levels.map((level) => {
+        const locked = earned.has(level.badge) ? "" : " locked";
+        return `<span class="badge-token${locked}">${level.badge}</span>`;
+      }).join("");
     }
 
     function nextLevel() {
@@ -1413,9 +1679,10 @@
       el("summaryPhase").hidden = false;
       el("summaryTitle").textContent = won ? "冰河探险完成！" : "挑战结束";
       el("summaryText").textContent = won
-        ? `你完成 3 个关卡，获得 ${state.stars} 颗星，分数 ${state.score}。`
+        ? `你完成 3 个关卡，获得 ${state.stars} 颗星，分数 ${state.score}，最高连击 ${state.bestCombo}。`
         : `生命用完了。复习 Newton Memory 后再挑战一次。`;
       setStageSignal(won ? "全部冰门打开！选择你的最终宝藏。" : "探险暂停。复习后再出发。");
+      renderBadges();
       resetTreasure();
       el("treasureZone").hidden = !won;
     }
@@ -1425,7 +1692,7 @@
       document.querySelectorAll(".treasure-box").forEach((box) => {
         box.disabled = false;
         box.classList.remove("opened");
-        box.querySelector(".treasure-icon").textContent = "🎁";
+        box.querySelector(".treasure-icon").textContent = "?";
       });
     }
 
@@ -1434,7 +1701,7 @@
         item.disabled = true;
       });
       box.classList.add("opened");
-      box.querySelector(".treasure-icon").textContent = "🏆";
+      box.querySelector(".treasure-icon").textContent = "★";
       el("treasureResult").textContent = box.dataset.reward;
       toast("宝藏打开了！");
     }
@@ -1493,6 +1760,7 @@
     el("restartBtn").addEventListener("click", startGame);
     el("playAgainBtn").addEventListener("click", startGame);
     el("nextBtn").addEventListener("click", nextLevel);
+    el("readyBtn").addEventListener("click", readyForQuestion);
     el("rulesBtn").addEventListener("click", () => openRules(false));
     el("closeRulesBtn").addEventListener("click", closeRules);
     el("rulesOverlay").addEventListener("click", (event) => {
