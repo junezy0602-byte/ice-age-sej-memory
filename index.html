@@ -1095,6 +1095,30 @@
       margin-bottom: 12px;
     }
 
+    .backend-status {
+      min-height: 40px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #eef5f8;
+      border: 1px solid #d5edf5;
+      color: var(--muted);
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .backend-status.good {
+      background: #eafff4;
+      border-color: #b8f2d2;
+      color: #11724a;
+    }
+
+    .backend-status.warn {
+      background: #fff8df;
+      border-color: #ffe3a0;
+      color: #8a5a00;
+    }
+
     .student-row label {
       font-weight: 1000;
       color: var(--deep);
@@ -1499,9 +1523,12 @@
                   <input id="studentName" type="text" maxlength="18" placeholder="输入名字">
                 </div>
                 <div class="report-card" id="parentReport"></div>
+                <div class="backend-status" id="backendStatus">老师后台准备中：未提交。</div>
                 <div class="report-actions">
                   <button class="btn secondary" id="copyReportBtn">复制报告</button>
                   <button class="btn" id="saveScoreBtn">加入排行榜</button>
+                  <button class="btn" id="submitBackendBtn">提交到老师后台</button>
+                  <button class="btn secondary" id="downloadBackupBtn">下载备份 CSV</button>
                 </div>
                 <div class="leaderboard">
                   <h5>课堂排行榜</h5>
@@ -1543,6 +1570,8 @@
     const QUESTIONS_PER_LEVEL = 2;
     const MAX_ENERGY = 100;
     const LEADERBOARD_KEY = "iceAgeSejMemoryLeaderboard";
+    const SUBMISSION_BACKUP_KEY = "iceAgeSejMemorySubmissions";
+    const GOOGLE_SHEET_WEB_APP_URL = "";
 
     const levels = [
       {
@@ -1874,6 +1903,7 @@
       el("treasureZone").hidden = !won;
       el("reportZone").hidden = !won;
       if (won) {
+        setBackendStatus("老师后台准备中：请先打开宝箱，再提交成绩。", "warn");
         renderParentReport();
         renderLeaderboard();
       }
@@ -1885,6 +1915,7 @@
       state.treasureOpened = false;
       el("treasureResult").textContent = "还没有打开宝箱。";
       el("saveScoreBtn").disabled = true;
+      el("submitBackendBtn").disabled = true;
       document.querySelectorAll(".treasure-box").forEach((box) => {
         box.disabled = false;
         box.classList.remove("opened");
@@ -1905,6 +1936,8 @@
       updateHud();
       el("treasureResult").textContent = `获得：${state.treasurePattern}。宝箱奖励：+${bonus} 分。当前总分 ${state.score}。`;
       el("saveScoreBtn").disabled = false;
+      el("submitBackendBtn").disabled = false;
+      setBackendStatus("可以提交成绩到老师后台。", "good");
       renderParentReport();
       toast(`宝箱打开了：+${bonus} 分`);
     }
@@ -1939,6 +1972,108 @@
 
     function renderParentReport() {
       el("parentReport").textContent = buildParentReport();
+    }
+
+    function setBackendStatus(message, type = "") {
+      el("backendStatus").textContent = message;
+      el("backendStatus").className = `backend-status${type ? ` ${type}` : ""}`;
+    }
+
+    function buildSubmissionPayload() {
+      renderParentReport();
+      return {
+        source: "Y4 SEJ Ice Age Newton Memory",
+        studentName: getStudentName(),
+        score: state.score,
+        stars: state.stars,
+        bestCombo: state.bestCombo,
+        treasurePattern: state.treasurePattern,
+        treasureBonus: state.treasureBonus,
+        learningNote: getLearningNote(),
+        parentReport: el("parentReport").textContent,
+        completedAt: new Date().toISOString(),
+        pageUrl: location.href
+      };
+    }
+
+    function getSubmissionBackups() {
+      try {
+        return JSON.parse(localStorage.getItem(SUBMISSION_BACKUP_KEY) || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveSubmissionBackup(payload, status) {
+      const backups = getSubmissionBackups();
+      backups.push({ ...payload, status });
+      localStorage.setItem(SUBMISSION_BACKUP_KEY, JSON.stringify(backups.slice(-120)));
+    }
+
+    async function submitToTeacherBackend() {
+      if (!state.treasureOpened) {
+        toast("请先打开一个宝箱。");
+        return;
+      }
+
+      const payload = buildSubmissionPayload();
+
+      if (!GOOGLE_SHEET_WEB_APP_URL) {
+        saveSubmissionBackup(payload, "后台未连接");
+        setBackendStatus("后台还没连接 Google Sheet。成绩已先保存在本机备份。", "warn");
+        toast("已保存本机备份。");
+        return;
+      }
+
+      el("submitBackendBtn").disabled = true;
+      setBackendStatus("正在提交到老师后台...", "warn");
+
+      try {
+        await fetch(GOOGLE_SHEET_WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        saveSubmissionBackup(payload, "已提交到老师后台");
+        setBackendStatus("已提交到老师后台。", "good");
+        toast("已提交到老师后台。");
+      } catch (error) {
+        saveSubmissionBackup(payload, "提交失败，本机备份");
+        setBackendStatus("提交失败，成绩已保存在本机备份。", "warn");
+        el("submitBackendBtn").disabled = false;
+        toast("提交失败，已保留备份。");
+      }
+    }
+
+    function csvEscape(value) {
+      return `"${String(value ?? "").replace(/"/g, '""')}"`;
+    }
+
+    function downloadBackupCsv() {
+      const rows = getSubmissionBackups();
+      const headers = [
+        "completedAt",
+        "studentName",
+        "score",
+        "stars",
+        "bestCombo",
+        "treasurePattern",
+        "treasureBonus",
+        "learningNote",
+        "status"
+      ];
+      const csv = [
+        headers.join(","),
+        ...rows.map((row) => headers.map((key) => csvEscape(row[key])).join(","))
+      ].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "y4-sej-memory-submissions.csv";
+      link.click();
+      URL.revokeObjectURL(link.href);
+      toast(rows.length ? "备份 CSV 已下载。" : "目前没有本机备份。");
     }
 
     async function copyParentReport() {
@@ -2047,6 +2182,8 @@
     el("studentName").addEventListener("input", renderParentReport);
     el("copyReportBtn").addEventListener("click", copyParentReport);
     el("saveScoreBtn").addEventListener("click", saveLeaderboardEntry);
+    el("submitBackendBtn").addEventListener("click", submitToTeacherBackend);
+    el("downloadBackupBtn").addEventListener("click", downloadBackupCsv);
     el("rulesBtn").addEventListener("click", () => openRules(false));
     el("closeRulesBtn").addEventListener("click", closeRules);
     el("rulesOverlay").addEventListener("click", (event) => {
