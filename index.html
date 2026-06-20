@@ -978,15 +978,86 @@
     }
 
     .treasure-icon {
-      width: 44px;
-      height: 44px;
+      position: relative;
+      width: 76px;
+      height: 58px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .treasure-glow {
+      position: absolute;
+      left: 50%;
+      top: 8px;
+      width: 56px;
+      height: 40px;
       border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(255,255,255,0.2);
-      border: 2px solid rgba(255,255,255,0.5);
-      font-size: 20px;
-      line-height: 1;
+      translate: -50% 0;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.92), rgba(255, 209, 102, 0.12) 68%, transparent 70%);
+      opacity: 0;
+      transform: scale(0.72);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .treasure-lid,
+    .treasure-body {
+      position: absolute;
+      left: 50%;
+      translate: -50% 0;
+      width: 64px;
+      border: 3px solid #6d3d16;
+      overflow: hidden;
+    }
+
+    .treasure-lid {
+      top: 7px;
+      height: 24px;
+      border-radius: 8px 8px 4px 4px;
+      background:
+        linear-gradient(90deg, transparent 0 44%, rgba(255,255,255,0.42) 44% 56%, transparent 56%),
+        linear-gradient(135deg, #ffc845, #f08a24);
+      transform-origin: 16px 24px;
+      transition: transform 0.2s ease, top 0.2s ease;
+      z-index: 2;
+    }
+
+    .treasure-body {
+      bottom: 0;
+      height: 36px;
+      border-radius: 5px 5px 9px 9px;
+      background:
+        linear-gradient(90deg, transparent 0 42%, rgba(255,255,255,0.38) 42% 58%, transparent 58%),
+        linear-gradient(180deg, #ffbd4a 0 42%, #b96c20 42% 100%);
+      box-shadow: inset 0 -6px 0 rgba(66, 34, 11, 0.2);
+      z-index: 1;
+    }
+
+    .treasure-lock {
+      position: absolute;
+      left: 50%;
+      top: 10px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      translate: -50% 0;
+      background: linear-gradient(180deg, #fff3b0, #ffd166);
+      border: 2px solid #6d3d16;
+    }
+
+    .treasure-box.opened .treasure-glow {
+      opacity: 1;
+      transform: scale(1.18);
+    }
+
+    .treasure-box.opened .treasure-lid {
+      top: 0;
+      transform: rotate(-18deg) translate(-5px, -8px);
+    }
+
+    .treasure-box.opened .treasure-body {
+      background:
+        linear-gradient(90deg, transparent 0 42%, rgba(255,255,255,0.44) 42% 58%, transparent 58%),
+        linear-gradient(180deg, #ffe082 0 42%, #d48625 42% 100%);
     }
 
     .treasure-result {
@@ -1315,16 +1386,28 @@
                 <p>通关奖励：三个宝藏只能选一个，看看你得到什么。</p>
                 <div class="treasure-grid">
                   <button class="treasure-box" data-reward="你获得「冰河记忆大师」称号！">
-                    <span class="treasure-icon">?</span>
-                    <span>宝藏 A</span>
+                    <span class="treasure-icon" aria-hidden="true">
+                      <span class="treasure-glow"></span>
+                      <span class="treasure-lid"></span>
+                      <span class="treasure-body"><span class="treasure-lock"></span></span>
+                    </span>
+                    <span>宝箱 A</span>
                   </button>
                   <button class="treasure-box" data-reward="你获得「时间线探险家」称号！">
-                    <span class="treasure-icon">?</span>
-                    <span>宝藏 B</span>
+                    <span class="treasure-icon" aria-hidden="true">
+                      <span class="treasure-glow"></span>
+                      <span class="treasure-lid"></span>
+                      <span class="treasure-body"><span class="treasure-lock"></span></span>
+                    </span>
+                    <span>宝箱 B</span>
                   </button>
                   <button class="treasure-box" data-reward="你获得「远古动物守护者」称号！">
-                    <span class="treasure-icon">?</span>
-                    <span>宝藏 C</span>
+                    <span class="treasure-icon" aria-hidden="true">
+                      <span class="treasure-glow"></span>
+                      <span class="treasure-lid"></span>
+                      <span class="treasure-body"><span class="treasure-lock"></span></span>
+                    </span>
+                    <span>宝箱 C</span>
                   </button>
                 </div>
                 <div class="treasure-result" id="treasureResult">还没有打开宝藏。</div>
@@ -1692,7 +1775,6 @@
       document.querySelectorAll(".treasure-box").forEach((box) => {
         box.disabled = false;
         box.classList.remove("opened");
-        box.querySelector(".treasure-icon").textContent = "?";
       });
     }
 
@@ -1701,7 +1783,6 @@
         item.disabled = true;
       });
       box.classList.add("opened");
-      box.querySelector(".treasure-icon").textContent = "★";
       el("treasureResult").textContent = box.dataset.reward;
       toast("宝藏打开了！");
     }
