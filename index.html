@@ -1071,6 +1071,86 @@
       font-weight: 1000;
     }
 
+    .report-zone {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(80, 148, 171, 0.24);
+      text-align: left;
+    }
+
+    .report-zone h4 {
+      margin: 0 0 10px;
+      text-align: center;
+      font-size: clamp(20px, 3vw, 28px);
+      color: var(--deep);
+    }
+
+    .student-row,
+    .report-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .student-row label {
+      font-weight: 1000;
+      color: var(--deep);
+    }
+
+    .student-row input {
+      min-height: 42px;
+      width: min(280px, 100%);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 2px solid #ccefff;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 900;
+    }
+
+    .report-card {
+      padding: 14px;
+      border-radius: 8px;
+      background: #f2fbff;
+      border: 1px solid #ccefff;
+      color: var(--ink);
+      font-weight: 900;
+      line-height: 1.48;
+      white-space: pre-line;
+    }
+
+    .leaderboard {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #fff8df;
+      border: 1px solid #ffe3a0;
+    }
+
+    .leaderboard h5 {
+      margin: 0 0 8px;
+      color: #8a5a00;
+      font-size: 18px;
+    }
+
+    .leaderboard ol {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding-left: 24px;
+      font-weight: 1000;
+    }
+
+    .leaderboard-empty {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
     .overlay {
       position: fixed;
       inset: 0;
@@ -1385,7 +1465,7 @@
                 <h4>选择一个冰河宝藏</h4>
                 <p>通关奖励：三个宝藏只能选一个，看看你得到什么。</p>
                 <div class="treasure-grid">
-                  <button class="treasure-box" data-bonus="2" data-reward="你获得「冰河记忆大师」称号！">
+                  <button class="treasure-box" data-bonus="2" data-pattern="可爱冰晶图案">
                     <span class="treasure-icon" aria-hidden="true">
                       <span class="treasure-glow"></span>
                       <span class="treasure-lid"></span>
@@ -1393,7 +1473,7 @@
                     </span>
                     <span>宝箱 A</span>
                   </button>
-                  <button class="treasure-box" data-bonus="3" data-reward="你获得「时间线探险家」称号！">
+                  <button class="treasure-box" data-bonus="3" data-pattern="帅气闪光图案">
                     <span class="treasure-icon" aria-hidden="true">
                       <span class="treasure-glow"></span>
                       <span class="treasure-lid"></span>
@@ -1401,7 +1481,7 @@
                     </span>
                     <span>宝箱 B</span>
                   </button>
-                  <button class="treasure-box" data-bonus="0" data-reward="你获得「远古动物守护者」称号！">
+                  <button class="treasure-box" data-bonus="0" data-pattern="加油雪山图案">
                     <span class="treasure-icon" aria-hidden="true">
                       <span class="treasure-glow"></span>
                       <span class="treasure-lid"></span>
@@ -1411,6 +1491,23 @@
                   </button>
                 </div>
                 <div class="treasure-result" id="treasureResult">还没有打开宝箱。</div>
+              </div>
+              <div class="report-zone" id="reportZone" hidden>
+                <h4>家长信息报告</h4>
+                <div class="student-row">
+                  <label for="studentName">学生名字</label>
+                  <input id="studentName" type="text" maxlength="18" placeholder="输入名字">
+                </div>
+                <div class="report-card" id="parentReport"></div>
+                <div class="report-actions">
+                  <button class="btn secondary" id="copyReportBtn">复制报告</button>
+                  <button class="btn" id="saveScoreBtn">加入排行榜</button>
+                </div>
+                <div class="leaderboard">
+                  <h5>课堂排行榜</h5>
+                  <ol id="leaderboardList"></ol>
+                  <p class="leaderboard-empty" id="leaderboardEmpty">还没有保存成绩。</p>
+                </div>
               </div>
               <div class="hero-actions" style="justify-content:center;margin-top:16px">
                 <button class="btn" id="playAgainBtn">再玩一次</button>
@@ -1445,6 +1542,7 @@
     const MEMORY_SECONDS = 30;
     const QUESTIONS_PER_LEVEL = 2;
     const MAX_ENERGY = 100;
+    const LEADERBOARD_KEY = "iceAgeSejMemoryLeaderboard";
 
     const levels = [
       {
@@ -1523,6 +1621,9 @@
       levelCorrect: 0,
       speedBonus: 0,
       badges: [],
+      treasureBonus: 0,
+      treasurePattern: "还没选择",
+      treasureOpened: false,
       locked: false,
       musicOn: true,
       bgm: null
@@ -1588,6 +1689,9 @@
       state.bestCombo = 0;
       state.energy = 0;
       state.badges = [];
+      state.treasureBonus = 0;
+      state.treasurePattern = "还没选择";
+      state.treasureOpened = false;
       state.lives = 3;
       updateHud();
       showScreen("gameScreen");
@@ -1768,10 +1872,19 @@
       renderBadges();
       resetTreasure();
       el("treasureZone").hidden = !won;
+      el("reportZone").hidden = !won;
+      if (won) {
+        renderParentReport();
+        renderLeaderboard();
+      }
     }
 
     function resetTreasure() {
+      state.treasureBonus = 0;
+      state.treasurePattern = "还没选择";
+      state.treasureOpened = false;
       el("treasureResult").textContent = "还没有打开宝箱。";
+      el("saveScoreBtn").disabled = true;
       document.querySelectorAll(".treasure-box").forEach((box) => {
         box.disabled = false;
         box.classList.remove("opened");
@@ -1779,15 +1892,101 @@
     }
 
     function chooseTreasure(box) {
+      if (state.treasureOpened) return;
       const bonus = Number(box.dataset.bonus || 0);
       document.querySelectorAll(".treasure-box").forEach((item) => {
         item.disabled = true;
       });
       box.classList.add("opened");
+      state.treasureOpened = true;
+      state.treasureBonus = bonus;
+      state.treasurePattern = box.dataset.pattern || "奖励图案";
       state.score += bonus;
       updateHud();
-      el("treasureResult").textContent = `${box.dataset.reward} 宝箱奖励：+${bonus} 分。当前总分 ${state.score}。`;
+      el("treasureResult").textContent = `获得：${state.treasurePattern}。宝箱奖励：+${bonus} 分。当前总分 ${state.score}。`;
+      el("saveScoreBtn").disabled = false;
+      renderParentReport();
       toast(`宝箱打开了：+${bonus} 分`);
+    }
+
+    function getStudentName() {
+      const name = el("studentName").value.trim();
+      return name || "学生";
+    }
+
+    function getLearningNote() {
+      if (state.stars >= 6 && state.bestCombo >= 5) {
+        return "表现很稳定，能够专心记住重点，并连续正确回忆。";
+      }
+      if (state.stars >= 4) {
+        return "已经掌握主要内容，可以继续练习时间线和关键词回忆。";
+      }
+      return "建议再复习一次重点笔记，用关键词帮助自己回忆。";
+    }
+
+    function buildParentReport() {
+      return [
+        `Y4 SEJ 冰河时代 Newton Memory 学习报告`,
+        `学生：${getStudentName()}`,
+        `完成情况：完成 3 个记忆关卡`,
+        `最终分数：${state.score}`,
+        `星星：${state.stars}`,
+        `最高连击：${state.bestCombo}`,
+        `宝箱奖励：${state.treasurePattern}（+${state.treasureBonus} 分）`,
+        `学习观察：${getLearningNote()}`
+      ].join("\n");
+    }
+
+    function renderParentReport() {
+      el("parentReport").textContent = buildParentReport();
+    }
+
+    async function copyParentReport() {
+      renderParentReport();
+      const report = el("parentReport").textContent;
+      try {
+        await navigator.clipboard.writeText(report);
+        toast("家长报告已复制。");
+      } catch (error) {
+        toast("无法自动复制，可以手动选取报告文字。");
+      }
+    }
+
+    function getLeaderboard() {
+      try {
+        return JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveLeaderboardEntry() {
+      const entry = {
+        name: getStudentName(),
+        score: state.score,
+        stars: state.stars,
+        combo: state.bestCombo,
+        pattern: state.treasurePattern,
+        savedAt: new Date().toISOString()
+      };
+      const board = getLeaderboard()
+        .concat(entry)
+        .sort((a, b) => b.score - a.score || b.combo - a.combo)
+        .slice(0, 8);
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(board));
+      renderLeaderboard();
+      toast("成绩已加入排行榜。");
+    }
+
+    function renderLeaderboard() {
+      const board = getLeaderboard();
+      el("leaderboardEmpty").hidden = board.length > 0;
+      el("leaderboardList").innerHTML = "";
+      board.forEach((item) => {
+        const row = document.createElement("li");
+        row.textContent = `${item.name}：${item.score} 分 · ${item.stars} 星 · 连击 ${item.combo}`;
+        el("leaderboardList").appendChild(row);
+      });
     }
 
     function toast(message) {
@@ -1845,6 +2044,9 @@
     el("playAgainBtn").addEventListener("click", startGame);
     el("nextBtn").addEventListener("click", nextLevel);
     el("readyBtn").addEventListener("click", readyForQuestion);
+    el("studentName").addEventListener("input", renderParentReport);
+    el("copyReportBtn").addEventListener("click", copyParentReport);
+    el("saveScoreBtn").addEventListener("click", saveLeaderboardEntry);
     el("rulesBtn").addEventListener("click", () => openRules(false));
     el("closeRulesBtn").addEventListener("click", closeRules);
     el("rulesOverlay").addEventListener("click", (event) => {
