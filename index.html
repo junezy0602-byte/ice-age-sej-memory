@@ -1517,7 +1517,7 @@
                 <div class="treasure-result" id="treasureResult">还没有打开宝箱。</div>
               </div>
               <div class="report-zone" id="reportZone" hidden>
-                <h4>家长信息报告</h4>
+                <h4>完整家长学习报告</h4>
                 <div class="student-row">
                   <label for="studentName">学生名字</label>
                   <input id="studentName" type="text" maxlength="18" placeholder="输入名字">
@@ -1525,7 +1525,7 @@
                 <div class="report-card" id="parentReport"></div>
                 <div class="backend-status" id="backendStatus">老师后台准备中：未提交。</div>
                 <div class="report-actions">
-                  <button class="btn secondary" id="copyReportBtn">复制报告</button>
+                  <button class="btn secondary" id="copyReportBtn">复制家长报告</button>
                   <button class="btn" id="saveScoreBtn">加入排行榜</button>
                   <button class="btn" id="submitBackendBtn">提交到老师后台</button>
                   <button class="btn secondary" id="downloadBackupBtn">下载备份 CSV</button>
@@ -1587,11 +1587,11 @@
         support: ["先记：冷 → 冰 → 盖地球", "数字：5 次", "名称：更新世 + 全新世"],
         chain: ["气温下降", "冰层形成", "覆盖地球", "冰河时代"],
         questions: [
-          { q: "什么是冰河时代？", options: ["地球温度上升", "地球被厚冰层覆盖", "地球连续下雨", "地球没有太阳"], answer: "地球被厚冰层覆盖" },
-          { q: "冰河时代是因为：", options: ["气温下降", "气温上升"], answer: "气温下降" },
-          { q: "地球共发生多少次冰河期？", options: ["3次", "4次", "5次", "6次"], answer: "5次" },
-          { q: "我们学习的是：", options: ["第一次冰河期", "第二次冰河期", "第四纪冰河期后冰河期", "第五次冰河期"], answer: "第四纪冰河期后冰河期" },
-          { q: "冰河时代形成是：", options: ["瞬间形成", "经过漫长时间形成"], answer: "经过漫长时间形成" }
+          { q: "什么是冰河时代？", options: ["地球温度上升", "地球被厚冰层覆盖", "地球连续下雨", "地球没有太阳"], answer: "地球被厚冰层覆盖", topic: "冰河时代定义" },
+          { q: "冰河时代是因为：", options: ["气温下降", "气温上升"], answer: "气温下降", topic: "形成原因：气温下降" },
+          { q: "地球共发生多少次冰河期？", options: ["3次", "4次", "5次", "6次"], answer: "5次", topic: "冰河期次数" },
+          { q: "我们学习的是：", options: ["第一次冰河期", "第二次冰河期", "第四纪冰河期后冰河期", "第五次冰河期"], answer: "第四纪冰河期后冰河期", topic: "第四纪冰河期后冰河期" },
+          { q: "冰河时代形成是：", options: ["瞬间形成", "经过漫长时间形成"], answer: "经过漫长时间形成", topic: "长期形成过程" }
         ]
       },
       {
@@ -1606,12 +1606,12 @@
         support: ["更新世 = 很冷 + 取火", "全新世 = 变暖 + 冰融", "11700 年前是分界点"],
         chain: ["更新世：极度寒冷", "陆地变宽", "学会取火", "全新世：温度上升", "冰层融化", "海平面上升"],
         questions: [
-          { q: "更新世开始于：", options: ["250万年前", "250年前", "11700年前", "现在"], answer: "250万年前" },
-          { q: "更新世结束于：", options: ["11700年前", "250万年前", "现在", "100年前"], answer: "11700年前" },
-          { q: "全新世开始于：", options: ["250万年前", "11700年前", "100年前", "现在"], answer: "11700年前" },
-          { q: "第四纪冰河期分成几个时间线？", options: ["1个", "2个", "3个", "5个"], answer: "2个" },
-          { q: "更新世时人类学会：", options: ["开车", "写字", "取火", "种田"], answer: "取火" },
-          { q: "全新世最明显变化：", options: ["温度下降", "温度上升"], answer: "温度上升" }
+          { q: "更新世开始于：", options: ["250万年前", "250年前", "11700年前", "现在"], answer: "250万年前", topic: "更新世开始时间" },
+          { q: "更新世结束于：", options: ["11700年前", "250万年前", "现在", "100年前"], answer: "11700年前", topic: "更新世结束时间" },
+          { q: "全新世开始于：", options: ["250万年前", "11700年前", "100年前", "现在"], answer: "11700年前", topic: "全新世开始时间" },
+          { q: "第四纪冰河期分成几个时间线？", options: ["1个", "2个", "3个", "5个"], answer: "2个", topic: "更新世与全新世分类" },
+          { q: "更新世时人类学会：", options: ["开车", "写字", "取火", "种田"], answer: "取火", topic: "更新世人类生活" },
+          { q: "全新世最明显变化：", options: ["温度下降", "温度上升"], answer: "温度上升", topic: "全新世气候变化" }
         ]
       },
       {
@@ -1625,11 +1625,11 @@
         support: ["记住 3 个：猛犸象、剑齿虎、巨型地獭", "看到恐龙 / 迅猛龙 = 不是冰河时代", "关键词：大多数已经灭绝"],
         chain: ["更新世", "猛犸象", "剑齿虎", "巨型地獭"],
         questions: [
-          { q: "冰河时代代表动物：", options: ["熊猫", "猛犸象", "长颈鹿", "鸵鸟"], answer: "猛犸象" },
-          { q: "巨型地獭属于：", options: ["冰河时代", "恐龙时代"], answer: "冰河时代" },
-          { q: "哪个不属于冰河时代？", options: ["猛犸象", "剑齿虎", "巨型地獭", "迅猛龙"], answer: "迅猛龙" },
-          { q: "更新世动物现在大多数：", options: ["进化成人类", "灭绝", "去月球", "在动物园"], answer: "灭绝" },
-          { q: "哪个属于冰河时代？", options: ["熊猫", "猛犸象", "长颈鹿", "老虎"], answer: "猛犸象" }
+          { q: "冰河时代代表动物：", options: ["熊猫", "猛犸象", "长颈鹿", "鸵鸟"], answer: "猛犸象", topic: "冰河时代代表动物" },
+          { q: "巨型地獭属于：", options: ["冰河时代", "恐龙时代"], answer: "冰河时代", topic: "冰河时代动物辨认" },
+          { q: "哪个不属于冰河时代？", options: ["猛犸象", "剑齿虎", "巨型地獭", "迅猛龙"], answer: "迅猛龙", topic: "排除非冰河时代动物" },
+          { q: "更新世动物现在大多数：", options: ["进化成人类", "灭绝", "去月球", "在动物园"], answer: "灭绝", topic: "更新世动物现况" },
+          { q: "哪个属于冰河时代？", options: ["熊猫", "猛犸象", "长颈鹿", "老虎"], answer: "猛犸象", topic: "冰河时代动物辨认" }
         ]
       }
     ];
@@ -1655,7 +1655,10 @@
       treasureOpened: false,
       locked: false,
       musicOn: true,
-      bgm: null
+      bgm: null,
+      answerLog: [],
+      missedQuestions: [],
+      correctTopics: []
     };
 
     const el = (id) => document.getElementById(id);
@@ -1721,6 +1724,9 @@
       state.treasureBonus = 0;
       state.treasurePattern = "还没选择";
       state.treasureOpened = false;
+      state.answerLog = [];
+      state.missedQuestions = [];
+      state.correctTopics = [];
       state.lives = 3;
       updateHud();
       showScreen("gameScreen");
@@ -1801,6 +1807,7 @@
       state.locked = true;
       const level = levels[state.level];
       const correct = option === state.currentQuestion.answer;
+      recordAnswer(level, option, correct);
       document.querySelectorAll(".choice").forEach((choice) => {
         choice.disabled = true;
         if (choice.textContent === state.currentQuestion.answer) choice.classList.add("correct");
@@ -1852,6 +1859,24 @@
           el("nextHint").textContent = "扣 1 条生命，重新记忆这一关。";
           setTimeout(startLevel, 1300);
         }
+      }
+    }
+
+    function recordAnswer(level, selectedAnswer, correct) {
+      const record = {
+        levelTitle: level.title,
+        question: state.currentQuestion.q,
+        selectedAnswer,
+        correctAnswer: state.currentQuestion.answer,
+        topic: state.currentQuestion.topic || state.currentQuestion.answer,
+        correct,
+        answeredAt: new Date().toISOString()
+      };
+      state.answerLog.push(record);
+      if (correct) {
+        if (!state.correctTopics.includes(record.topic)) state.correctTopics.push(record.topic);
+      } else {
+        state.missedQuestions.push(record);
       }
     }
 
@@ -1957,7 +1982,54 @@
       return "建议再复习一次重点笔记，用关键词帮助自己回忆。";
     }
 
+    function getCorrectCount() {
+      return state.answerLog.filter((item) => item.correct).length;
+    }
+
+    function getWrongCount() {
+      return state.answerLog.filter((item) => !item.correct).length;
+    }
+
+    function getAccuracyText() {
+      if (!state.answerLog.length) return "0%";
+      return `${Math.round((getCorrectCount() / state.answerLog.length) * 100)}%`;
+    }
+
+    function getMissedTopics() {
+      return [...new Set(state.missedQuestions.map((item) => item.topic))];
+    }
+
+    function getMasteredTopics() {
+      return state.correctTopics.filter((topic) => !getMissedTopics().includes(topic));
+    }
+
+    function getMissedQuestionsText() {
+      if (!state.missedQuestions.length) return "没有明显错题，基础掌握稳定。";
+      return state.missedQuestions.map((item, index) =>
+        `${index + 1}. ${item.levelTitle}｜${item.question} 学生选：${item.selectedAnswer}；正确：${item.correctAnswer}。`
+      ).join("\n");
+    }
+
+    function getPracticeAdvice() {
+      const missedTopics = getMissedTopics();
+      if (!missedTopics.length) {
+        return "可以让孩子尝试不看笔记复述 3 个关卡重点，并用自己的话解释时间线和代表动物。";
+      }
+      if (missedTopics.some((topic) => topic.includes("时间") || topic.includes("更新世") || topic.includes("全新世"))) {
+        return "建议重点复习更新时间线：250 万年前、11700 年前、更新世、全新世。可以让孩子画一条简单时间线再讲给家长听。";
+      }
+      if (missedTopics.some((topic) => topic.includes("动物"))) {
+        return "建议复习冰河时代动物分类：猛犸象、剑齿虎、巨型地獭属于冰河时代；恐龙和迅猛龙不是本课重点时代。";
+      }
+      if (missedTopics.some((topic) => topic.includes("定义") || topic.includes("原因") || topic.includes("形成"))) {
+        return "建议先复习冰河时代基本概念：气温下降，厚冰层覆盖地球，并且经过漫长时间形成。";
+      }
+      return `建议复习这些知识点：${missedTopics.join("、")}。可以先看笔记，再让孩子闭眼说出关键词。`;
+    }
+
     function buildParentReport() {
+      const missedTopics = getMissedTopics();
+      const masteredTopics = getMasteredTopics();
       return [
         `Y4 SEJ 冰河时代 Newton Memory 学习报告`,
         `学生：${getStudentName()}`,
@@ -1965,8 +2037,17 @@
         `最终分数：${state.score}`,
         `星星：${state.stars}`,
         `最高连击：${state.bestCombo}`,
+        `答题正确率：${getAccuracyText()}（答对 ${getCorrectCount()} / 总答题 ${state.answerLog.length}）`,
         `宝箱奖励：${state.treasurePattern}（+${state.treasureBonus} 分）`,
-        `学习观察：${getLearningNote()}`
+        ``,
+        `学习观察：${getLearningNote()}`,
+        `掌握较好的点：${masteredTopics.length ? masteredTopics.join("、") : "还需要更多答题记录来判断。"}`,
+        `需要加强的点：${missedTopics.length ? missedTopics.join("、") : "暂时没有明显 miss 点。"}`,
+        ``,
+        `错题 / Miss 详情：`,
+        getMissedQuestionsText(),
+        ``,
+        `给家长的建议：${getPracticeAdvice()}`
       ].join("\n");
     }
 
@@ -1990,6 +2071,12 @@
         treasurePattern: state.treasurePattern,
         treasureBonus: state.treasureBonus,
         learningNote: getLearningNote(),
+        correctAnswers: getCorrectCount(),
+        wrongAnswers: getWrongCount(),
+        accuracy: getAccuracyText(),
+        missedTopics: getMissedTopics().join("、"),
+        missedQuestions: getMissedQuestionsText(),
+        practiceAdvice: getPracticeAdvice(),
         parentReport: el("parentReport").textContent,
         completedAt: new Date().toISOString(),
         pageUrl: location.href
@@ -2061,6 +2148,12 @@
         "treasurePattern",
         "treasureBonus",
         "learningNote",
+        "correctAnswers",
+        "wrongAnswers",
+        "accuracy",
+        "missedTopics",
+        "missedQuestions",
+        "practiceAdvice",
         "status"
       ];
       const csv = [

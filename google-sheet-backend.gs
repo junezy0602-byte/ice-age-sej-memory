@@ -9,6 +9,12 @@ const HEADERS = [
   "Treasure Pattern",
   "Treasure Bonus",
   "Learning Note",
+  "Correct Answers",
+  "Wrong Answers",
+  "Accuracy",
+  "Missed Topics",
+  "Missed Questions",
+  "Practice Advice",
   "Parent Report",
   "Page URL",
   "Game Completed At"
@@ -31,7 +37,13 @@ function doPost(e) {
       cleanText(data.treasurePattern, 80),
       toNumber(data.treasureBonus),
       cleanText(data.learningNote, 500),
-      cleanText(data.parentReport, 2000),
+      toNumber(data.correctAnswers),
+      toNumber(data.wrongAnswers),
+      cleanText(data.accuracy, 20),
+      cleanText(data.missedTopics, 1000),
+      cleanMultiline(data.missedQuestions, 2500),
+      cleanText(data.practiceAdvice, 1000),
+      cleanMultiline(data.parentReport, 5000),
       cleanText(data.pageUrl, 500),
       cleanText(data.completedAt, 80)
     ]);
@@ -53,21 +65,35 @@ function doGet() {
 function getSubmissionSheet_() {
   const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = spreadsheet.getSheetByName(SHEET_NAME) || spreadsheet.insertSheet(SHEET_NAME);
-
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(HEADERS);
-    sheet.setFrozenRows(1);
-    sheet.getRange(1, 1, 1, HEADERS.length)
-      .setFontWeight("bold")
-      .setBackground("#e8f8ff");
-    sheet.autoResizeColumns(1, HEADERS.length);
-  }
+  ensureHeaders_(sheet);
 
   return sheet;
 }
 
+function ensureHeaders_(sheet) {
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+  } else {
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  }
+
+  sheet.setFrozenRows(1);
+  sheet.getRange(1, 1, 1, HEADERS.length)
+    .setFontWeight("bold")
+    .setBackground("#e8f8ff");
+  sheet.autoResizeColumns(1, HEADERS.length);
+}
+
 function cleanText(value, maxLength) {
   return String(value || "").replace(/\s+/g, " ").trim().slice(0, maxLength);
+}
+
+function cleanMultiline(value, maxLength) {
+  return String(value || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .trim()
+    .slice(0, maxLength);
 }
 
 function toNumber(value) {

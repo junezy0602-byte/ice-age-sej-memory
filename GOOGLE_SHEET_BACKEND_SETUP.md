@@ -49,6 +49,12 @@ The Sheet receives:
 - treasure pattern
 - treasure bonus
 - learning note
+- correct answers
+- wrong answers
+- accuracy
+- missed topics
+- missed questions
+- practice advice
 - parent report
 - page URL
 - game completed time
