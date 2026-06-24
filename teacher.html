@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Y4 SEJ 老师报告中心</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17324d;
+      --muted: #5a7183;
+      --line: #d8e9f2;
+      --panel: #ffffff;
+      --bg: #f4f9fc;
+      --blue: #0b6fa8;
+      --teal: #157c84;
+      --gold: #f4b942;
+      --danger: #b84d4d;
+      font-family: Arial, "Noto Sans SC", "PingFang SC", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(232, 248, 255, 0.9), rgba(244, 249, 252, 0.96)),
+        repeating-linear-gradient(90deg, rgba(11, 111, 168, 0.06) 0 1px, transparent 1px 60px);
+      color: var(--ink);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(1.65rem, 3vw, 2.45rem);
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 50px rgba(23, 50, 77, 0.09);
+      padding: 16px;
+    }
+
+    .panel h2 {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+    }
+
+    .toolbar,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button,
+    .nav-link {
+      border: 0;
+      border-radius: 8px;
+      background: var(--blue);
+      color: white;
+      font-weight: 800;
+      padding: 11px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.95rem;
+      min-height: 42px;
+    }
+
+    button.secondary,
+    .nav-link {
+      background: #e8f4fa;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    button.warn { background: var(--danger); }
+
+    button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    .record-list {
+      display: grid;
+      gap: 8px;
+      max-height: 490px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .record-btn {
+      width: 100%;
+      text-align: left;
+      background: #f7fbfe;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      display: grid;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .record-btn.active {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(21, 124, 132, 0.13);
+    }
+
+    .record-meta {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+      background: #fbfdff;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-weight: 800;
+      margin: 14px 0 7px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 170px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      font: inherit;
+      line-height: 1.5;
+      color: var(--ink);
+      background: #fbfdff;
+    }
+
+    .report-preview {
+      white-space: pre-wrap;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      min-height: 520px;
+      padding: 18px;
+      line-height: 1.62;
+      overflow: auto;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0 0 14px;
+    }
+
+    .stat {
+      background: #f7fbfe;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 1.2rem;
+      color: var(--blue);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      background: #17324d;
+      color: white;
+      border-radius: 8px;
+      padding: 11px 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+      font-weight: 800;
+      max-width: calc(100% - 32px);
+      text-align: center;
+    }
+
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 820px) {
+      header { align-items: start; flex-direction: column; }
+      .grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      button, .nav-link { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Y4 SEJ 老师报告中心</h1>
+        <p class="sub">家长版报告只放在这里，学生游戏页不会显示下载按钮。</p>
+      </div>
+      <a class="nav-link" href="./index.html">回到学生游戏</a>
+    </header>
+
+    <section class="grid">
+      <aside class="panel">
+        <h2>本机记录</h2>
+        <div class="toolbar">
+          <button class="secondary" id="refreshBtn">刷新记录</button>
+          <button class="secondary" id="downloadCsvBtn">下载 CSV</button>
+        </div>
+        <div style="height:12px"></div>
+        <div class="record-list" id="recordList"></div>
+
+        <label for="pasteReport">粘贴报告文字</label>
+        <textarea id="pasteReport" placeholder="可以从 Google Sheet 的 Parent Report 栏复制一份报告到这里。"></textarea>
+        <div class="toolbar" style="margin-top:8px">
+          <button class="secondary" id="usePasteBtn">使用粘贴内容</button>
+          <button class="secondary" id="clearPasteBtn">清空</button>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <h2>家长可发送报告</h2>
+        <div class="stats">
+          <div class="stat"><b id="statName">-</b><span>学生</span></div>
+          <div class="stat"><b id="statScore">-</b><span>分数</span></div>
+          <div class="stat"><b id="statAccuracy">-</b><span>正确率</span></div>
+          <div class="stat"><b id="statMiss">-</b><span>Miss 点</span></div>
+        </div>
+        <div class="actions" style="margin-bottom:12px">
+          <button id="downloadImageBtn">下载图片</button>
+          <button id="downloadPdfBtn">下载 PDF</button>
+          <button class="secondary" id="copyBtn">复制文字</button>
+          <button class="warn" id="clearLocalBtn">清除本机记录</button>
+        </div>
+        <div class="report-preview" id="reportPreview">还没有选择报告。</div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const SUBMISSION_BACKUP_KEY = "iceAgeSejMemorySubmissions";
+    const HEADERS = [
+      "completedAt",
+      "studentName",
+      "score",
+      "stars",
+      "bestCombo",
+      "treasurePattern",
+      "treasureBonus",
+      "learningNote",
+      "correctAnswers",
+      "wrongAnswers",
+      "accuracy",
+      "missedTopics",
+      "missedQuestions",
+      "practiceAdvice",
+      "status"
+    ];
+
+    let records = [];
+    let selectedIndex = -1;
+    let selectedReport = "";
+
+    const el = (id) => document.getElementById(id);
+
+    function toast(message) {
+      el("toast").textContent = message;
+      el("toast").classList.add("show");
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => el("toast").classList.remove("show"), 1700);
+    }
+
+    function getRecords() {
+      try {
+        return JSON.parse(localStorage.getItem(SUBMISSION_BACKUP_KEY) || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString("zh-MY", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function refreshRecords() {
+      records = getRecords().slice().reverse();
+      renderRecordList();
+      if (records.length) {
+        selectRecord(0);
+      } else {
+        selectedIndex = -1;
+        setReport("");
+      }
+    }
+
+    function renderRecordList() {
+      const list = el("recordList");
+      list.innerHTML = "";
+      if (!records.length) {
+        list.innerHTML = '<div class="empty">本机暂时没有记录。学生提交后，或者老师把 Google Sheet 的报告文字粘贴进来，就可以生成图片/PDF。</div>';
+        return;
+      }
+
+      records.forEach((record, index) => {
+        const button = document.createElement("button");
+        button.className = `record-btn${index === selectedIndex ? " active" : ""}`;
+        button.type = "button";
+        button.innerHTML = `
+          <span>${record.studentName || "学生"} · ${record.score ?? "-"} 分</span>
+          <span class="record-meta">${formatDate(record.completedAt)} · ${record.status || "本机记录"}</span>
+        `;
+        button.addEventListener("click", () => selectRecord(index));
+        list.appendChild(button);
+      });
+    }
+
+    function selectRecord(index) {
+      selectedIndex = index;
+      const record = records[index];
+      setReport(record && record.parentReport ? record.parentReport : buildReportFromRecord(record));
+      renderStats(record);
+      renderRecordList();
+    }
+
+    function buildReportFromRecord(record) {
+      if (!record) return "";
+      return [
+        "Y4 SEJ 冰河时代 Newton Memory 学习报告",
+        `学生：${record.studentName || "学生"}`,
+        `完成情况：完成 3 个记忆关卡`,
+        `最终分数：${record.score ?? "-"}`,
+        `星星：${record.stars ?? "-"}`,
+        `最高连击：${record.bestCombo ?? "-"}`,
+        `答题正确率：${record.accuracy || "-"}（答对 ${record.correctAnswers ?? "-"} / 错题 ${record.wrongAnswers ?? "-"}）`,
+        `宝箱奖励：${record.treasurePattern || "-"}（+${record.treasureBonus ?? 0} 分）`,
+        "",
+        `学习观察：${record.learningNote || "-"}`,
+        `需要加强的点：${record.missedTopics || "暂时没有明显 miss 点。"}`,
+        "",
+        "错题 / Miss 详情：",
+        record.missedQuestions || "没有明显错题，基础掌握稳定。",
+        "",
+        `给家长的建议：${record.practiceAdvice || "-"}`
+      ].join("\n");
+    }
+
+    function parseField(report, label) {
+      const line = report.split("\n").find((item) => item.startsWith(label));
+      return line ? line.replace(label, "").trim() : "-";
+    }
+
+    function renderStats(record) {
+      const report = selectedReport;
+      const missText = record && record.missedTopics ? record.missedTopics : parseField(report, "需要加强的点：");
+      el("statName").textContent = record && record.studentName ? record.studentName : parseField(report, "学生：");
+      el("statScore").textContent = record && record.score !== undefined ? record.score : parseField(report, "最终分数：");
+      el("statAccuracy").textContent = record && record.accuracy ? record.accuracy : parseField(report, "答题正确率：").split("（")[0];
+      el("statMiss").textContent = !missText || missText === "-" ? "-" : missText.split("、").length;
+    }
+
+    function setReport(report) {
+      selectedReport = report || "";
+      el("reportPreview").textContent = selectedReport || "还没有选择报告。";
+      const hasReport = Boolean(selectedReport.trim());
+      el("downloadImageBtn").disabled = !hasReport;
+      el("downloadPdfBtn").disabled = !hasReport;
+      el("copyBtn").disabled = !hasReport;
+      if (!hasReport) {
+        el("statName").textContent = "-";
+        el("statScore").textContent = "-";
+        el("statAccuracy").textContent = "-";
+        el("statMiss").textContent = "-";
+      }
+    }
+
+    function getReportFileName(extension) {
+      const name = parseField(selectedReport, "学生：")
+        .replace(/[\\/:*?"<>|]/g, "")
+        .replace(/\s+/g, "-")
+        .slice(0, 30) || "student";
+      return `Y4-SEJ-Ice-Age-Report-${name}.${extension}`;
+    }
+
+    function wrapCanvasLine(ctx, text, maxWidth) {
+      if (!text) return [""];
+      const lines = [];
+      let line = "";
+      Array.from(text).forEach((char) => {
+        const testLine = line + char;
+        if (ctx.measureText(testLine).width > maxWidth && line) {
+          lines.push(line);
+          line = char.trimStart();
+        } else {
+          line = testLine;
+        }
+      });
+      if (line) lines.push(line);
+      return lines;
+    }
+
+    function roundRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    function createReportCanvas() {
+      const reportLines = selectedReport.split("\n");
+      const width = 1240;
+      const margin = 72;
+      const maxTextWidth = width - margin * 2;
+      const measureCanvas = document.createElement("canvas");
+      const measureCtx = measureCanvas.getContext("2d");
+      measureCtx.font = "30px Arial, sans-serif";
+      const preparedLines = reportLines.flatMap((line) => wrapCanvasLine(measureCtx, line, maxTextWidth));
+      const height = Math.max(1754, 230 + preparedLines.length * 42);
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "#f6fbff";
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = "#e8f8ff";
+      ctx.fillRect(0, 0, width, 170);
+      ctx.fillStyle = "#17324d";
+      ctx.font = "bold 46px Arial, sans-serif";
+      ctx.fillText("Y4 SEJ 冰河时代学习报告", margin, 78);
+      ctx.font = "26px Arial, sans-serif";
+      ctx.fillStyle = "#486274";
+      ctx.fillText("Newton Memory Game · 家长可读版", margin, 124);
+
+      ctx.fillStyle = "#ffffff";
+      roundRect(ctx, margin - 18, 195, width - margin * 2 + 36, height - 260, 24);
+      ctx.fill();
+      ctx.strokeStyle = "#d8e9f2";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      let y = 255;
+      preparedLines.forEach((line) => {
+        if (!line) {
+          y += 22;
+          return;
+        }
+        const isMainTitle = line.includes("Newton Memory 学习报告");
+        const isSection = line.endsWith("：") || line.startsWith("学习观察") || line.startsWith("掌握较好的点") ||
+          line.startsWith("需要加强的点") || line.startsWith("给家长的建议");
+        ctx.font = isMainTitle ? "bold 36px Arial, sans-serif" : isSection ? "bold 28px Arial, sans-serif" : "26px Arial, sans-serif";
+        ctx.fillStyle = isMainTitle ? "#14314a" : isSection ? "#185d72" : "#243746";
+        ctx.fillText(line, margin + 12, y);
+        y += isMainTitle ? 52 : 42;
+      });
+
+      ctx.fillStyle = "#f3f7fa";
+      ctx.fillRect(0, height - 68, width, 68);
+      ctx.fillStyle = "#5f7380";
+      ctx.font = "22px Arial, sans-serif";
+      ctx.fillText("由 Y4 SEJ 冰河时代记忆游戏自动生成", margin, height - 28);
+      return canvas;
+    }
+
+    function downloadBlob(blob, filename) {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function downloadReportImage() {
+      const canvas = createReportCanvas();
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          toast("暂时无法生成图片。");
+          return;
+        }
+        downloadBlob(blob, getReportFileName("jpg"));
+        toast("报告图片已下载。");
+      }, "image/jpeg", 0.92);
+    }
+
+    function dataUrlToBytes(dataUrl) {
+      const base64 = dataUrl.split(",")[1];
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    function makePdfFromJpeg(jpegBytes, imageWidth, imageHeight) {
+      const encoder = new TextEncoder();
+      const chunks = [];
+      const offsets = [0];
+      let position = 0;
+      const pageWidth = 595.28;
+      const pageHeight = pageWidth * (imageHeight / imageWidth);
+      const content = `q\n${pageWidth.toFixed(2)} 0 0 ${pageHeight.toFixed(2)} 0 0 cm\n/Im0 Do\nQ`;
+
+      function addString(value) {
+        const bytes = encoder.encode(value);
+        chunks.push(bytes);
+        position += bytes.length;
+      }
+
+      function addBytes(bytes) {
+        chunks.push(bytes);
+        position += bytes.length;
+      }
+
+      function addObject(number, value) {
+        offsets[number] = position;
+        addString(`${number} 0 obj\n${value}\nendobj\n`);
+      }
+
+      addString("%PDF-1.4\n");
+      addObject(1, "<< /Type /Catalog /Pages 2 0 R >>");
+      addObject(2, "<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
+      addObject(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth.toFixed(2)} ${pageHeight.toFixed(2)}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
+      offsets[4] = position;
+      addString(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imageWidth} /Height ${imageHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`);
+      addBytes(jpegBytes);
+      addString("\nendstream\nendobj\n");
+      addObject(5, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
+      const xrefPosition = position;
+      addString("xref\n0 6\n0000000000 65535 f \n");
+      for (let i = 1; i <= 5; i += 1) {
+        addString(`${String(offsets[i]).padStart(10, "0")} 00000 n \n`);
+      }
+      addString(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPosition}\n%%EOF`);
+
+      const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+      const pdfBytes = new Uint8Array(totalLength);
+      let offset = 0;
+      chunks.forEach((chunk) => {
+        pdfBytes.set(chunk, offset);
+        offset += chunk.length;
+      });
+      return new Blob([pdfBytes], { type: "application/pdf" });
+    }
+
+    function downloadReportPdf() {
+      const canvas = createReportCanvas();
+      const jpegBytes = dataUrlToBytes(canvas.toDataURL("image/jpeg", 0.92));
+      const pdfBlob = makePdfFromJpeg(jpegBytes, canvas.width, canvas.height);
+      downloadBlob(pdfBlob, getReportFileName("pdf"));
+      toast("报告 PDF 已下载。");
+    }
+
+    function csvEscape(value) {
+      return `"${String(value ?? "").replace(/"/g, '""')}"`;
+    }
+
+    function downloadCsv() {
+      const csv = [
+        HEADERS.join(","),
+        ...getRecords().map((row) => HEADERS.map((key) => csvEscape(row[key])).join(","))
+      ].join("\n");
+      downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), "y4-sej-memory-submissions.csv");
+      toast("CSV 已下载。");
+    }
+
+    async function copyReport() {
+      try {
+        await navigator.clipboard.writeText(selectedReport);
+        toast("报告文字已复制。");
+      } catch (error) {
+        toast("无法自动复制，可以手动选取文字。");
+      }
+    }
+
+    function usePastedReport() {
+      const report = el("pasteReport").value.trim();
+      if (!report) {
+        toast("请先粘贴报告文字。");
+        return;
+      }
+      selectedIndex = -1;
+      setReport(report);
+      renderStats(null);
+      renderRecordList();
+      toast("已载入粘贴报告。");
+    }
+
+    function clearLocalRecords() {
+      if (!confirm("确定要清除这个浏览器里的本机记录吗？Google Sheet 里的资料不会被删除。")) return;
+      localStorage.removeItem(SUBMISSION_BACKUP_KEY);
+      refreshRecords();
+      toast("本机记录已清除。");
+    }
+
+    el("refreshBtn").addEventListener("click", refreshRecords);
+    el("downloadCsvBtn").addEventListener("click", downloadCsv);
+    el("downloadImageBtn").addEventListener("click", downloadReportImage);
+    el("downloadPdfBtn").addEventListener("click", downloadReportPdf);
+    el("copyBtn").addEventListener("click", copyReport);
+    el("usePasteBtn").addEventListener("click", usePastedReport);
+    el("clearPasteBtn").addEventListener("click", () => {
+      el("pasteReport").value = "";
+      toast("已清空。");
+    });
+    el("clearLocalBtn").addEventListener("click", clearLocalRecords);
+
+    setReport("");
+    refreshRecords();
+  </script>
+</body>
+</html>

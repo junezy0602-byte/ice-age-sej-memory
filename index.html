@@ -1517,20 +1517,15 @@
                 <div class="treasure-result" id="treasureResult">还没有打开宝箱。</div>
               </div>
               <div class="report-zone" id="reportZone" hidden>
-                <h4>完整家长学习报告</h4>
+                <h4>保存课堂成绩</h4>
                 <div class="student-row">
                   <label for="studentName">学生名字</label>
                   <input id="studentName" type="text" maxlength="18" placeholder="输入名字">
                 </div>
-                <div class="report-card" id="parentReport"></div>
                 <div class="backend-status" id="backendStatus">老师后台准备中：未提交。</div>
                 <div class="report-actions">
-                  <button class="btn secondary" id="copyReportBtn">复制家长报告</button>
-                  <button class="btn" id="downloadReportImageBtn">下载报告图片</button>
-                  <button class="btn" id="downloadReportPdfBtn">下载报告 PDF</button>
                   <button class="btn" id="saveScoreBtn">加入排行榜</button>
                   <button class="btn" id="submitBackendBtn">提交到老师后台</button>
-                  <button class="btn secondary" id="downloadBackupBtn">下载备份 CSV</button>
                 </div>
                 <div class="leaderboard">
                   <h5>课堂排行榜</h5>
@@ -1931,7 +1926,6 @@
       el("reportZone").hidden = !won;
       if (won) {
         setBackendStatus("老师后台准备中：请先打开宝箱，再提交成绩。", "warn");
-        renderParentReport();
         renderLeaderboard();
       }
     }
@@ -1965,7 +1959,6 @@
       el("saveScoreBtn").disabled = false;
       el("submitBackendBtn").disabled = false;
       setBackendStatus("可以提交成绩到老师后台。", "good");
-      renderParentReport();
       toast(`宝箱打开了：+${bonus} 分`);
     }
 
@@ -2053,17 +2046,13 @@
       ].join("\n");
     }
 
-    function renderParentReport() {
-      el("parentReport").textContent = buildParentReport();
-    }
-
     function setBackendStatus(message, type = "") {
       el("backendStatus").textContent = message;
       el("backendStatus").className = `backend-status${type ? ` ${type}` : ""}`;
     }
 
     function buildSubmissionPayload() {
-      renderParentReport();
+      const parentReport = buildParentReport();
       return {
         source: "Y4 SEJ Ice Age Newton Memory",
         studentName: getStudentName(),
@@ -2079,7 +2068,7 @@
         missedTopics: getMissedTopics().join("、"),
         missedQuestions: getMissedQuestionsText(),
         practiceAdvice: getPracticeAdvice(),
-        parentReport: el("parentReport").textContent,
+        parentReport,
         completedAt: new Date().toISOString(),
         pageUrl: location.href
       };
@@ -2133,236 +2122,6 @@
         el("submitBackendBtn").disabled = false;
         toast("提交失败，已保留备份。");
       }
-    }
-
-    function csvEscape(value) {
-      return `"${String(value ?? "").replace(/"/g, '""')}"`;
-    }
-
-    function downloadBackupCsv() {
-      const rows = getSubmissionBackups();
-      const headers = [
-        "completedAt",
-        "studentName",
-        "score",
-        "stars",
-        "bestCombo",
-        "treasurePattern",
-        "treasureBonus",
-        "learningNote",
-        "correctAnswers",
-        "wrongAnswers",
-        "accuracy",
-        "missedTopics",
-        "missedQuestions",
-        "practiceAdvice",
-        "status"
-      ];
-      const csv = [
-        headers.join(","),
-        ...rows.map((row) => headers.map((key) => csvEscape(row[key])).join(","))
-      ].join("\n");
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "y4-sej-memory-submissions.csv";
-      link.click();
-      URL.revokeObjectURL(link.href);
-      toast(rows.length ? "备份 CSV 已下载。" : "目前没有本机备份。");
-    }
-
-    async function copyParentReport() {
-      renderParentReport();
-      const report = el("parentReport").textContent;
-      try {
-        await navigator.clipboard.writeText(report);
-        toast("家长报告已复制。");
-      } catch (error) {
-        toast("无法自动复制，可以手动选取报告文字。");
-      }
-    }
-
-    function getReportFileName(extension) {
-      const safeName = getStudentName()
-        .replace(/[\\/:*?"<>|]/g, "")
-        .replace(/\s+/g, "-")
-        .slice(0, 30) || "student";
-      return `Y4-SEJ-Ice-Age-Report-${safeName}.${extension}`;
-    }
-
-    function wrapCanvasLine(ctx, text, maxWidth) {
-      if (!text) return [""];
-      const lines = [];
-      let line = "";
-      Array.from(text).forEach((char) => {
-        const testLine = line + char;
-        if (ctx.measureText(testLine).width > maxWidth && line) {
-          lines.push(line);
-          line = char.trimStart();
-        } else {
-          line = testLine;
-        }
-      });
-      if (line) lines.push(line);
-      return lines;
-    }
-
-    function createReportCanvas() {
-      renderParentReport();
-      const reportLines = el("parentReport").textContent.split("\n");
-      const width = 1240;
-      const margin = 72;
-      const maxTextWidth = width - margin * 2;
-      const measureCanvas = document.createElement("canvas");
-      const measureCtx = measureCanvas.getContext("2d");
-      measureCtx.font = "30px Arial, sans-serif";
-      const preparedLines = reportLines.flatMap((line) => wrapCanvasLine(measureCtx, line, maxTextWidth));
-      const height = Math.max(1754, 230 + preparedLines.length * 42);
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-
-      ctx.fillStyle = "#f6fbff";
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = "#e8f8ff";
-      ctx.fillRect(0, 0, width, 170);
-      ctx.fillStyle = "#17324d";
-      ctx.font = "bold 46px Arial, sans-serif";
-      ctx.fillText("Y4 SEJ 冰河时代学习报告", margin, 78);
-      ctx.font = "26px Arial, sans-serif";
-      ctx.fillStyle = "#486274";
-      ctx.fillText("Newton Memory Game · 家长可读版", margin, 124);
-
-      ctx.fillStyle = "#ffffff";
-      roundRect(ctx, margin - 18, 195, width - margin * 2 + 36, height - 260, 24);
-      ctx.fill();
-      ctx.strokeStyle = "#d8e9f2";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      let y = 255;
-      preparedLines.forEach((line) => {
-        if (!line) {
-          y += 22;
-          return;
-        }
-        const isMainTitle = line.includes("Newton Memory 学习报告");
-        const isSection = line.endsWith("：") || line.startsWith("学习观察") || line.startsWith("掌握较好的点") ||
-          line.startsWith("需要加强的点") || line.startsWith("给家长的建议");
-        ctx.font = isMainTitle ? "bold 36px Arial, sans-serif" : isSection ? "bold 28px Arial, sans-serif" : "26px Arial, sans-serif";
-        ctx.fillStyle = isMainTitle ? "#14314a" : isSection ? "#185d72" : "#243746";
-        ctx.fillText(line, margin + 12, y);
-        y += isMainTitle ? 52 : 42;
-      });
-
-      ctx.fillStyle = "#f3f7fa";
-      ctx.fillRect(0, height - 68, width, 68);
-      ctx.fillStyle = "#5f7380";
-      ctx.font = "22px Arial, sans-serif";
-      ctx.fillText("由 Y4 SEJ 冰河时代记忆游戏自动生成", margin, height - 28);
-      return canvas;
-    }
-
-    function roundRect(ctx, x, y, width, height, radius) {
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + width - radius, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-      ctx.lineTo(x + width, y + height - radius);
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-      ctx.lineTo(x + radius, y + height);
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-      ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath();
-    }
-
-    function downloadBlob(blob, filename) {
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      link.click();
-      URL.revokeObjectURL(link.href);
-    }
-
-    function downloadReportImage() {
-      const canvas = createReportCanvas();
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          toast("暂时无法生成图片。");
-          return;
-        }
-        downloadBlob(blob, getReportFileName("jpg"));
-        toast("家长报告图片已下载。");
-      }, "image/jpeg", 0.92);
-    }
-
-    function dataUrlToBytes(dataUrl) {
-      const base64 = dataUrl.split(",")[1];
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
-      return bytes;
-    }
-
-    function makePdfFromJpeg(jpegBytes, imageWidth, imageHeight) {
-      const encoder = new TextEncoder();
-      const chunks = [];
-      const offsets = [0];
-      let position = 0;
-      const pageWidth = 595.28;
-      const pageHeight = pageWidth * (imageHeight / imageWidth);
-      const content = `q\n${pageWidth.toFixed(2)} 0 0 ${pageHeight.toFixed(2)} 0 0 cm\n/Im0 Do\nQ`;
-
-      function addString(value) {
-        const bytes = encoder.encode(value);
-        chunks.push(bytes);
-        position += bytes.length;
-      }
-
-      function addBytes(bytes) {
-        chunks.push(bytes);
-        position += bytes.length;
-      }
-
-      function addObject(number, value) {
-        offsets[number] = position;
-        addString(`${number} 0 obj\n${value}\nendobj\n`);
-      }
-
-      addString("%PDF-1.4\n");
-      addObject(1, "<< /Type /Catalog /Pages 2 0 R >>");
-      addObject(2, "<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
-      addObject(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth.toFixed(2)} ${pageHeight.toFixed(2)}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
-      offsets[4] = position;
-      addString(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imageWidth} /Height ${imageHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`);
-      addBytes(jpegBytes);
-      addString("\nendstream\nendobj\n");
-      addObject(5, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
-      const xrefPosition = position;
-      addString("xref\n0 6\n0000000000 65535 f \n");
-      for (let i = 1; i <= 5; i += 1) {
-        addString(`${String(offsets[i]).padStart(10, "0")} 00000 n \n`);
-      }
-      addString(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPosition}\n%%EOF`);
-
-      const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
-      const pdfBytes = new Uint8Array(totalLength);
-      let offset = 0;
-      chunks.forEach((chunk) => {
-        pdfBytes.set(chunk, offset);
-        offset += chunk.length;
-      });
-      return new Blob([pdfBytes], { type: "application/pdf" });
-    }
-
-    function downloadReportPdf() {
-      const canvas = createReportCanvas();
-      const jpegBytes = dataUrlToBytes(canvas.toDataURL("image/jpeg", 0.92));
-      const pdfBlob = makePdfFromJpeg(jpegBytes, canvas.width, canvas.height);
-      downloadBlob(pdfBlob, getReportFileName("pdf"));
-      toast("家长报告 PDF 已下载。");
     }
 
     function getLeaderboard() {
@@ -2457,13 +2216,8 @@
     el("playAgainBtn").addEventListener("click", startGame);
     el("nextBtn").addEventListener("click", nextLevel);
     el("readyBtn").addEventListener("click", readyForQuestion);
-    el("studentName").addEventListener("input", renderParentReport);
-    el("copyReportBtn").addEventListener("click", copyParentReport);
-    el("downloadReportImageBtn").addEventListener("click", downloadReportImage);
-    el("downloadReportPdfBtn").addEventListener("click", downloadReportPdf);
     el("saveScoreBtn").addEventListener("click", saveLeaderboardEntry);
     el("submitBackendBtn").addEventListener("click", submitToTeacherBackend);
-    el("downloadBackupBtn").addEventListener("click", downloadBackupCsv);
     el("rulesBtn").addEventListener("click", () => openRules(false));
     el("closeRulesBtn").addEventListener("click", closeRules);
     el("rulesOverlay").addEventListener("click", (event) => {
